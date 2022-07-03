@@ -2,11 +2,30 @@ const { ServerError, MissingParamError } = require('../../../src/presentation/er
 const { LoginRouter } = require('../../../src/presentation/routers')
 
 const makeSut = () => {
-  const sut = new LoginRouter()
+  const authUseCaseSpy = makeAuthUseCaseSpy()
+  const sut = new LoginRouter(authUseCaseSpy)
   return {
-    sut
+    sut,
+    authUseCaseSpy
   }
 }
+
+const makeAuthUseCaseSpy = () => {
+  class AuthUseCase {
+    auth (email, password) {
+      this.email = email
+      this.password = password
+    }
+  }
+  return new AuthUseCase()
+}
+
+const makeHttpRequest = () => ({
+  body: {
+    email: 'valid_email@email.com',
+    password: 'valid_password'
+  }
+})
 
 describe('Login Router', () => {
   test('Should return 400 if no email is provided', async () => {
@@ -45,5 +64,13 @@ describe('Login Router', () => {
     const httpResponse = await sut.handle({})
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should call AuthUseCase with correct params', async () => {
+    const { sut, authUseCaseSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+    expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
+    expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
   })
 })
