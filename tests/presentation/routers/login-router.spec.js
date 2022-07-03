@@ -1,4 +1,4 @@
-const { ServerError, MissingParamError } = require('../../../src/presentation/errors')
+const { ServerError, MissingParamError, UnauthorizedError } = require('../../../src/presentation/errors')
 const { LoginRouter } = require('../../../src/presentation/routers')
 
 const makeSut = () => {
@@ -12,9 +12,11 @@ const makeSut = () => {
 
 const makeAuthUseCaseSpy = () => {
   class AuthUseCase {
+    accessToken = 'valid_token'
     auth (email, password) {
       this.email = email
       this.password = password
+      return this.accessToken
     }
   }
   return new AuthUseCase()
@@ -82,9 +84,19 @@ describe('Login Router', () => {
   })
 
   test('Should return 401 when invalid credentials are provided', async () => {
-    const { sut } = makeSut()
+    const { sut, authUseCaseSpy } = makeSut()
+    authUseCaseSpy.accessToken = undefined
     const httpRequest = makeHttpRequestWithInvalidCredentials()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual(new UnauthorizedError())
+  })
+
+  test('Should return 200 when valid credentials are provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequestWithInvalidCredentials()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({ accessToken: 'valid_token' })
   })
 })
