@@ -5,12 +5,12 @@
   "author": "Geraldo Alves",
   "main": "index.js",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest --watch",
+    "test:staged": "jest --passWithNoTests"
   },
-  "lint-staged": {
-    "*.js": [
-      "standard --fix"
-    ]
+  "standard": {
+    "env": [ "jest" ]
   },
   "keywords": [],
   "license": "ISC",
