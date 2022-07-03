@@ -75,6 +75,14 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
+  test('Should return 500 if no AuthUseCase is provided', async () => {
+    const sut = new LoginRouter()
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
   test('Should call AuthUseCase with correct params', async () => {
     const { sut, authUseCaseSpy } = makeSut()
     const httpRequest = makeHttpRequest()
