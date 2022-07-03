@@ -1,4 +1,3 @@
-const { MissingParamError } = require('../errors')
 const { HttpHelper } = require('../helpers')
 
 module.exports = class LoginRouter {
@@ -14,9 +13,6 @@ module.exports = class LoginRouter {
       if (error) {
         return HttpHelper.badRequest(error)
       }
-
-      if (!email) return HttpHelper.badRequest(new MissingParamError('email'))
-      if (!password) return HttpHelper.badRequest(new MissingParamError('password'))
       const accessToken = this.authUseCase.auth(email, password)
       if (!accessToken) {
         return HttpHelper.unauthorized()
