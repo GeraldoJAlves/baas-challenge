@@ -2,6 +2,7 @@
   "name": "clean",
   "version": "1.0.0",
   "description": "",
+  "author": "Geraldo Alves",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install"
@@ -12,7 +13,6 @@
     ]
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
