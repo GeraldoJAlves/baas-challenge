@@ -1,4 +1,4 @@
-const { InvalidParamError } = require('../../../src/presentation/errors')
+const { InvalidParamError, ServerError } = require('../../../src/presentation/errors')
 const { LoginRouter } = require('../../../src/presentation/routers')
 
 const makeSut = () => {
@@ -31,5 +31,12 @@ describe('Login Router', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('password'))
+  })
+
+  test('Should return 500 if no HttpRequest is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
