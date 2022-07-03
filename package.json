@@ -4,15 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "staged": "npx standard --fix",
     "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.js": ["standard --fix"]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "husky": "^8.0.1",
+    "husky": "^8.0.0",
     "jest": "^28.1.2",
+    "lint-staged": "^13.0.3",
     "standard": "^17.0.0"
   }
 }
