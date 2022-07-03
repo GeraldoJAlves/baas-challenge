@@ -35,6 +35,13 @@ describe('Login Router', () => {
 
   test('Should return 500 if no HttpRequest is provided', async () => {
     const { sut } = makeSut()
+    const httpResponse = await sut.handle()
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should return 500 if an invalid HttpRequest is provided', async () => {
+    const { sut } = makeSut()
     const httpResponse = await sut.handle({})
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
