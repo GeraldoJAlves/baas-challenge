@@ -1,12 +1,17 @@
-const { ServerError, MissingParamError, UnauthorizedError } = require('../../../src/presentation/errors')
+const { ServerError, MissingParamError, UnauthorizedError, InvalidParamError } = require('../../../src/presentation/errors')
 const { LoginRouter } = require('../../../src/presentation/routers')
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCaseSpy()
-  const sut = new LoginRouter(authUseCaseSpy)
+  const validationSpy = makeValidationSpy()
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    validation: validationSpy
+  })
   return {
     sut,
-    authUseCaseSpy
+    authUseCaseSpy,
+    validationSpy
   }
 }
 
@@ -20,6 +25,17 @@ const makeAuthUseCaseSpy = () => {
     }
   }
   return new AuthUseCase()
+}
+
+const makeValidationSpy = () => {
+  class Validation {
+    error = null
+    validate (input) {
+      this.input = input
+      return this.error
+    }
+  }
+  return new Validation()
 }
 
 const makeHttpRequest = () => ({
@@ -76,7 +92,9 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if no AuthUseCase is provided', async () => {
-    const sut = new LoginRouter()
+    const sut = new LoginRouter({
+      validation: makeValidationSpy()
+    })
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -84,7 +102,10 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if an invalid AuthUseCase is provided', async () => {
-    const sut = new LoginRouter({})
+    const sut = new LoginRouter({
+      authUseCase: {},
+      validation: makeValidationSpy()
+    })
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -110,9 +131,17 @@ describe('Login Router', () => {
 
   test('Should return 200 when valid credentials are provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = makeHttpRequestWithInvalidCredentials()
+    const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({ accessToken: 'valid_token' })
+  })
+
+  test('Should return 400 if validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    validationSpy.error = new InvalidParamError()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
   })
 })
