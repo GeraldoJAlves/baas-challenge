@@ -7,12 +7,16 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.js": ["standard --fix"]
+    "*.js": [
+      "standard --fix"
+    ]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "husky": "^8.0.0",
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
