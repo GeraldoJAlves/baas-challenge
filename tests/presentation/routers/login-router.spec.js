@@ -113,11 +113,18 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual({ accessToken: 'valid_token' })
   })
 
-  test('Should return 400 if validation returns an error', async () => {
+  test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationSpy } = makeSut()
     const httpRequest = makeHttpRequest()
     validationSpy.error = new InvalidParamError()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should call Validation with correct params', async () => {
+    const { sut, validationSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+    expect(validationSpy.input).toEqual(httpRequest.body)
   })
 })
