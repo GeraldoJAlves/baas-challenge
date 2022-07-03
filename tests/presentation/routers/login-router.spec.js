@@ -1,4 +1,4 @@
-const { ServerError, UnauthorizedError, InvalidParamError } = require('../../../src/presentation/errors')
+const { ServerError, UnauthorizedError, InvalidParamError, MissingParamError } = require('../../../src/presentation/errors')
 const { LoginRouter } = require('../../../src/presentation/routers')
 
 const makeSut = () => {
@@ -145,8 +145,11 @@ describe('Login Router', () => {
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationSpy } = makeSut()
     const httpRequest = makeHttpRequest()
-    validationSpy.error = new InvalidParamError()
-    const httpResponse = await sut.handle(httpRequest)
+    validationSpy.error = new InvalidParamError('param')
+    let httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    validationSpy.error = new MissingParamError('param')
+    httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
 
