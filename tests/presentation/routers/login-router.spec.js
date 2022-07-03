@@ -27,6 +27,13 @@ const makeHttpRequest = () => ({
   }
 })
 
+const makeHttpRequestWithInvalidCredentials = () => ({
+  body: {
+    email: 'invalid_email@email.com',
+    password: 'invalid_password'
+  }
+})
+
 describe('Login Router', () => {
   test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut()
@@ -72,5 +79,12 @@ describe('Login Router', () => {
     await sut.handle(httpRequest)
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
+  })
+
+  test('Should return 401 when invalid credentials are provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequestWithInvalidCredentials()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(401)
   })
 })
