@@ -11,8 +11,11 @@ module.exports = class LoginRouter {
       const { email, password } = httpRequest.body
       if (!email) return HttpHelper.badRequest(new MissingParamError('email'))
       if (!password) return HttpHelper.badRequest(new MissingParamError('password'))
-      this.authUseCase.auth(email, password)
-      return HttpHelper.unauthorized()
+      const accessToken = this.authUseCase.auth(email, password)
+      if (!accessToken) {
+        return HttpHelper.unauthorized()
+      }
+      return HttpHelper.ok({ accessToken })
     } catch (error) {
       console.error(error)
       return HttpHelper.serverError(error)

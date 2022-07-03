@@ -21,4 +21,11 @@ module.exports = class HttpHelper {
       statusCode: 401
     }
   }
+
+  static ok (body) {
+    return {
+      body,
+      statusCode: 200
+    }
+  }
 }
