@@ -1,7 +1,7 @@
 module.exports = class LoginRouter {
   async handle (httpRequest) {
-    const { email } = httpRequest.body
-    if (!email) {
+    const { email, password } = httpRequest.body
+    if (!email || !password) {
       return {
         statusCode: 400
       }
