@@ -4,17 +4,25 @@ const { MissingParamError, InvalidParamError } = require('../../../src/presentat
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
   const encrypterSpy = makeEncrypterSpy()
+  const tokenGeneratorSpy = makeTokenGeneratorSpy()
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    encrypter: encrypterSpy
+    encrypter: encrypterSpy,
+    tokenGenerator: tokenGeneratorSpy
   })
-  return { sut, loadUserByEmailRepositorySpy, encrypterSpy }
+  return {
+    sut,
+    loadUserByEmailRepositorySpy,
+    encrypterSpy,
+    tokenGeneratorSpy
+  }
 }
 
 const makeLoadUserByEmailRepositorySpy = () => {
   class LoadUserByEmailRepositorySpy {
     user = {
-      password: 'hash_password'
+      id: 'user_id',
+      password: 'hashed_password'
     }
 
     async load (email) {
@@ -27,12 +35,25 @@ const makeLoadUserByEmailRepositorySpy = () => {
 
 const makeEncrypterSpy = () => {
   class EncrypterSpy {
+    isValid = true
     compare (password, hashedPassword) {
       this.password = password
       this.hashedPassword = hashedPassword
+      return this.isValid
     }
   }
   return new EncrypterSpy()
+}
+
+const makeTokenGeneratorSpy = () => {
+  class TokenGeneratorSpy {
+    accessToken = 'any_token'
+    async generate (userId) {
+      this.userId = userId
+      return this.accessToken
+    }
+  }
+  return new TokenGeneratorSpy()
 }
 
 describe('Auth UseCase', () => {
@@ -50,7 +71,8 @@ describe('Auth UseCase', () => {
 
   test('Should throw if no LoadUserByEmailRepository is provided', async () => {
     const sut = new AuthUseCase({
-      encrypter: makeEncrypterSpy()
+      encrypter: makeEncrypterSpy(),
+      tokenGenerator: makeTokenGeneratorSpy()
     })
     const promise = sut.auth('any_email@email.com', 'any_password')
     expect(promise).rejects.toThrow(new MissingParamError('LoadUserByEmailRepository'))
@@ -59,7 +81,8 @@ describe('Auth UseCase', () => {
   test('Should throw if LoadUserByEmailRepository has no load method', async () => {
     const sut = new AuthUseCase({
       loadUserByEmailRepository: {},
-      encrypter: makeEncrypterSpy()
+      encrypter: makeEncrypterSpy(),
+      tokenGenerator: makeTokenGeneratorSpy()
     })
     const promise = sut.auth('any_email@email.com', 'any_password')
     expect(promise).rejects.toThrow(new InvalidParamError('LoadUserByEmailRepository'))
@@ -83,5 +106,11 @@ describe('Auth UseCase', () => {
     await sut.auth('valid_email@email.com', 'any_password')
     expect(encrypterSpy.password).toBe('any_password')
     expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
+  })
+
+  test('Should call TokenGenerator with correct userId', async () => {
+    const { sut, tokenGeneratorSpy, loadUserByEmailRepositorySpy } = makeSut()
+    await sut.auth('valid_email@email.com', 'any_password')
+    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 })
