@@ -34,4 +34,10 @@ describe('Email Validation', () => {
     const error = sut.validate({ email: 'any_email@email.com' })
     expect(error).toEqual(new InvalidParamError('email'))
   })
+
+  test('Should return false when EmailValidator returns true', () => {
+    const { sut } = makeSut()
+    const error = sut.validate({ email: 'any_email@email.com' })
+    expect(error).toBeFalsy()
+  })
 })
