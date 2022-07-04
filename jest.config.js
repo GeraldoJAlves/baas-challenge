@@ -1,3 +1,4 @@
 module.exports = {
-  coverageProvider: 'v8'
+  coverageProvider: 'v8',
+  collectCoverageFrom: ['**/src/**/*.js']
 }
