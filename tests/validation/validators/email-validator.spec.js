@@ -1,4 +1,5 @@
 const { EmailValidation } = require('../../../src/validation/validators')
+const { InvalidParamError } = require('../../../src/presentation/errors')
 
 const makeSut = (field = 'email') => {
   const emailValidatorSpy = makeEmailValidatorSpy()
@@ -25,5 +26,12 @@ describe('Email Validation', () => {
     const { sut, emailValidatorSpy } = makeSut()
     sut.validate({ email: 'any_email@email.com' })
     expect(emailValidatorSpy.email).toBe('any_email@email.com')
+  })
+
+  test('Should return an InvalidParamError when EmailValidator returns false', () => {
+    const { sut, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = false
+    const error = sut.validate({ email: 'any_email@email.com' })
+    expect(error).toEqual(new InvalidParamError('email'))
   })
 })
