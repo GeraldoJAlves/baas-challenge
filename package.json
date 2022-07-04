@@ -13,7 +13,9 @@
     "test:ci": "npm test -- --coverage"
   },
   "standard": {
-    "env": [ "jest" ]
+    "env": [
+      "jest"
+    ]
   },
   "keywords": [],
   "license": "ISC",
@@ -24,5 +26,8 @@
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
     "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "validator": "^13.7.0"
   }
 }
