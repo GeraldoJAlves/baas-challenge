@@ -1,4 +1,5 @@
-const RequiredField = require('../../../src/validation/validators/required-field')
+const { MissingParamError } = require('../../../src/presentation/errors')
+const { RequiredField } = require('../../../src/validation/validators')
 
 const makeSut = (field = 'email') => {
   const sut = new RequiredField(field)
@@ -18,5 +19,12 @@ describe('Required Field', () => {
     const input = makeInput()
     const error = sut.validate(input)
     expect(error).toBeFalsy()
+  })
+
+  test('Should return an MissingParamError if no field is provided', () => {
+    const { sut } = makeSut()
+    const input = { password: 'any_password' }
+    const error = sut.validate(input)
+    expect(error).toEqual(new MissingParamError('email'))
   })
 })
