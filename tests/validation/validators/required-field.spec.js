@@ -27,4 +27,18 @@ describe('Required Field', () => {
     const error = sut.validate(input)
     expect(error).toEqual(new MissingParamError('email'))
   })
+
+  test('Should throw if no input is provided', () => {
+    const { sut } = makeSut()
+    expect(() => {
+      sut.validate()
+    }).toThrow()
+  })
+
+  test('Should throw if no dependencies are provided', () => {
+    const sut = new RequiredField()
+    expect(() => {
+      sut.validate()
+    }).toThrow()
+  })
 })
