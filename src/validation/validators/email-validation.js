@@ -1,3 +1,5 @@
+const { InvalidParamError } = require('../../presentation/errors')
+
 module.exports = class EmailValidation {
   constructor (fieldName, emailValidator) {
     this.fieldName = fieldName
@@ -5,6 +7,9 @@ module.exports = class EmailValidation {
   }
 
   validate (input) {
-    this.emailValidator.isValid(input[this.fieldName])
+    const isValid = this.emailValidator.isValid(input[this.fieldName])
+    if (!isValid) {
+      return new InvalidParamError(this.fieldName)
+    }
   }
 }
