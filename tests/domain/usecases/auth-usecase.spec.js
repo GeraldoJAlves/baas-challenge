@@ -3,15 +3,18 @@ const { MissingParamError, InvalidParamError } = require('../../../src/presentat
 
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
-  return { sut, loadUserByEmailRepositorySpy }
+  const encrypterSpy = makeEncrypterSpy()
+  const sut = new AuthUseCase({
+    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    encrypter: encrypterSpy
+  })
+  return { sut, loadUserByEmailRepositorySpy, encrypterSpy }
 }
 
 const makeLoadUserByEmailRepositorySpy = () => {
   class LoadUserByEmailRepositorySpy {
     user = {
-      email: 'any_email@email.com',
-      password: 'any_password'
+      password: 'hash_password'
     }
 
     async load (email) {
@@ -20,6 +23,16 @@ const makeLoadUserByEmailRepositorySpy = () => {
     }
   }
   return new LoadUserByEmailRepositorySpy()
+}
+
+const makeEncrypterSpy = () => {
+  class EncrypterSpy {
+    compare (password, hashedPassword) {
+      this.password = password
+      this.hashedPassword = hashedPassword
+    }
+  }
+  return new EncrypterSpy()
 }
 
 describe('Auth UseCase', () => {
@@ -36,13 +49,18 @@ describe('Auth UseCase', () => {
   })
 
   test('Should throw if no LoadUserByEmailRepository is provided', async () => {
-    const sut = new AuthUseCase()
+    const sut = new AuthUseCase({
+      encrypter: makeEncrypterSpy()
+    })
     const promise = sut.auth('any_email@email.com', 'any_password')
     expect(promise).rejects.toThrow(new MissingParamError('LoadUserByEmailRepository'))
   })
 
   test('Should throw if LoadUserByEmailRepository has no load method', async () => {
-    const sut = new AuthUseCase({})
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: {},
+      encrypter: makeEncrypterSpy()
+    })
     const promise = sut.auth('any_email@email.com', 'any_password')
     expect(promise).rejects.toThrow(new InvalidParamError('LoadUserByEmailRepository'))
   })
@@ -58,5 +76,12 @@ describe('Auth UseCase', () => {
     loadUserByEmailRepositorySpy.user = null
     const accessToken = await sut.auth('any_email@email.com', 'any_password')
     expect(accessToken).toBeNull()
+  })
+
+  test('Should call Encrypter with correct values', async () => {
+    const { sut, encrypterSpy, loadUserByEmailRepositorySpy } = makeSut()
+    await sut.auth('valid_email@email.com', 'any_password')
+    expect(encrypterSpy.password).toBe('any_password')
+    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
 })
