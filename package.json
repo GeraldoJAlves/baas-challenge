@@ -6,9 +6,10 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "jest --silent --noStackTrace --watch",
-    "test:staged": "jest --silent --noStackTrace --passWithNoTests --findRelatedTests",
-    "test:ci": "jest --silent --noStackTrace --coverage"
+    "test": "jest --silent --noStackTrace --passWithNoTests",
+    "test:unit": "npm test -- --watch",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage"
   },
   "standard": {
     "env": [ "jest" ]
