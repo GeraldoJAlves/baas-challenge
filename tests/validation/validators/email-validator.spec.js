@@ -45,4 +45,9 @@ describe('Email Validation', () => {
     const error = sut.validate(makeInput())
     expect(error).toBeFalsy()
   })
+
+  test('Should throw when no dependencies are provided', () => {
+    const sut = new EmailValidation()
+    expect(() => { sut.validate(makeInput()) }).toThrow()
+  })
 })
