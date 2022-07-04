@@ -21,23 +21,28 @@ const makeEmailValidatorSpy = () => {
   return new EmailValidator()
 }
 
+const makeInput = () => ({
+  email: 'any_email@email.com'
+})
+
 describe('Email Validation', () => {
   test('Should call EmailValidator with correct param', () => {
     const { sut, emailValidatorSpy } = makeSut()
-    sut.validate({ email: 'any_email@email.com' })
-    expect(emailValidatorSpy.email).toBe('any_email@email.com')
+    const input = makeInput()
+    sut.validate(input)
+    expect(emailValidatorSpy.email).toBe(input.email)
   })
 
   test('Should return an InvalidParamError when EmailValidator returns false', () => {
-    const { sut, emailValidatorSpy } = makeSut()
+    const { sut, emailValidatorSpy } = makeSut('email')
     emailValidatorSpy.isEmailValid = false
-    const error = sut.validate({ email: 'any_email@email.com' })
+    const error = sut.validate(makeInput())
     expect(error).toEqual(new InvalidParamError('email'))
   })
 
   test('Should return false when EmailValidator returns true', () => {
     const { sut } = makeSut()
-    const error = sut.validate({ email: 'any_email@email.com' })
+    const error = sut.validate(makeInput())
     expect(error).toBeFalsy()
   })
 })
