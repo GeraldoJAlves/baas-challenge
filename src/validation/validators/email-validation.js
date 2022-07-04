@@ -6,7 +6,7 @@ module.exports = class EmailValidation {
     this.emailValidator = emailValidator
   }
 
-  validate (input) {
+  validate (input = {}) {
     const isValid = this.emailValidator.isValid(input[this.fieldName])
     if (!isValid) {
       return new InvalidParamError(this.fieldName)
