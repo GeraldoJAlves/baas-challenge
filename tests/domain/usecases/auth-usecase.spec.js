@@ -26,6 +26,12 @@ const makeDependencies = () => ({
   tokenGenerator: makeTokenGeneratorSpy()
 })
 
+const makeDependenciesThrowError = () => ({
+  loadUserByEmailRepository: makeLoadUserByEmailRepositoryThrowError(),
+  encrypter: makeEncrypterThrowError(),
+  tokenGenerator: makeTokenGeneratorThrowError()
+})
+
 const makeLoadUserByEmailRepositorySpy = () => {
   class LoadUserByEmailRepositorySpy {
     user = {
@@ -36,6 +42,15 @@ const makeLoadUserByEmailRepositorySpy = () => {
     async load (email) {
       this.email = email
       return this.user
+    }
+  }
+  return new LoadUserByEmailRepositorySpy()
+}
+
+const makeLoadUserByEmailRepositoryThrowError = () => {
+  class LoadUserByEmailRepositorySpy {
+    async load () {
+      throw new Error()
     }
   }
   return new LoadUserByEmailRepositorySpy()
@@ -53,12 +68,30 @@ const makeEncrypterSpy = () => {
   return new EncrypterSpy()
 }
 
+const makeEncrypterThrowError = () => {
+  class EncrypterSpy {
+    compare () {
+      throw new Error()
+    }
+  }
+  return new EncrypterSpy()
+}
+
 const makeTokenGeneratorSpy = () => {
   class TokenGeneratorSpy {
     accessToken = 'any_token'
     async generate (userId) {
       this.userId = userId
       return this.accessToken
+    }
+  }
+  return new TokenGeneratorSpy()
+}
+
+const makeTokenGeneratorThrowError = () => {
+  class TokenGeneratorSpy {
+    async generate () {
+      throw new Error()
     }
   }
   return new TokenGeneratorSpy()
@@ -95,6 +128,19 @@ describe('Auth UseCase', () => {
       const sut = new AuthUseCase({
         ...dependencies,
         [dependency]: {}
+      })
+      const promise = sut.auth('any_email@email.com', 'any_password')
+      expect(promise).rejects.toThrow()
+    }
+  })
+
+  test('Should throw if dependency throws', async () => {
+    const dependenciesThrowError = makeDependenciesThrowError()
+    const dependencies = makeDependencies()
+    for (const dependency in dependencies) {
+      const sut = new AuthUseCase({
+        ...dependencies,
+        [dependency]: dependenciesThrowError[dependency]
       })
       const promise = sut.auth('any_email@email.com', 'any_password')
       expect(promise).rejects.toThrow()
