@@ -33,20 +33,20 @@ describe('Email Validation', () => {
     expect(emailValidatorSpy.email).toBe(input.email)
   })
 
-  test('Should return an InvalidParamError when EmailValidator returns false', () => {
+  test('Should return an InvalidParamError if EmailValidator returns false', () => {
     const { sut, emailValidatorSpy } = makeSut('email')
     emailValidatorSpy.isEmailValid = false
     const error = sut.validate(makeInput())
     expect(error).toEqual(new InvalidParamError('email'))
   })
 
-  test('Should return false when EmailValidator returns true', () => {
+  test('Should return false if an EmailValidator returns true', () => {
     const { sut } = makeSut()
     const error = sut.validate(makeInput())
     expect(error).toBeFalsy()
   })
 
-  test('Should throw when no dependencies are provided', () => {
+  test('Should throw if no dependencies are provided', () => {
     const sut = new EmailValidation()
     expect(() => { sut.validate(makeInput()) }).toThrow()
   })
