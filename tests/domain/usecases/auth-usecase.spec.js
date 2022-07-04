@@ -78,6 +78,24 @@ describe('Auth UseCase', () => {
     expect(promise).rejects.toThrow(new MissingParamError('LoadUserByEmailRepository'))
   })
 
+  test('Should throw if no Encrypter is provided', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+      tokenGenerator: makeTokenGeneratorSpy()
+    })
+    const promise = sut.auth('any_email@email.com', 'any_password')
+    expect(promise).rejects.toThrow(new MissingParamError('Encrypter'))
+  })
+
+  test('Should throw if no TokenGenerator is provided', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+      encrypter: makeEncrypterSpy()
+    })
+    const promise = sut.auth('any_email@email.com', 'any_password')
+    expect(promise).rejects.toThrow(new MissingParamError('TokenGenerator'))
+  })
+
   test('Should throw if LoadUserByEmailRepository has no load method', async () => {
     const sut = new AuthUseCase({
       loadUserByEmailRepository: {},
@@ -86,6 +104,26 @@ describe('Auth UseCase', () => {
     })
     const promise = sut.auth('any_email@email.com', 'any_password')
     expect(promise).rejects.toThrow(new InvalidParamError('LoadUserByEmailRepository'))
+  })
+
+  test('Should throw if Encrypter has no load method', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+      encrypter: {},
+      tokenGenerator: makeTokenGeneratorSpy()
+    })
+    const promise = sut.auth('any_email@email.com', 'any_password')
+    expect(promise).rejects.toThrow(new InvalidParamError('Encrypter'))
+  })
+
+  test('Should throw if TokenGenerator has no load method', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+      encrypter: makeEncrypterSpy(),
+      tokenGenerator: {}
+    })
+    const promise = sut.auth('any_email@email.com', 'any_password')
+    expect(promise).rejects.toThrow(new InvalidParamError('TokenGenerator'))
   })
 
   test('Should call LoadUserByEmailRepository with correct param', async () => {
