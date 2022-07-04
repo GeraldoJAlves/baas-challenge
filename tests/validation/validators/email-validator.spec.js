@@ -50,4 +50,16 @@ describe('Email Validation', () => {
     const sut = new EmailValidation()
     expect(() => { sut.validate(makeInput()) }).toThrow()
   })
+
+  test('Should return false if input no has field', () => {
+    const { sut } = makeSut('password')
+    const error = sut.validate(makeInput())
+    expect(error).toBeFalsy()
+  })
+
+  test('Should return false if no input is provided', () => {
+    const { sut } = makeSut('password')
+    const error = sut.validate()
+    expect(error).toBeFalsy()
+  })
 })
