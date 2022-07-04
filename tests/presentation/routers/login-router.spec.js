@@ -1,10 +1,10 @@
 const { ServerError, UnauthorizedError, InvalidParamError, MissingParamError } = require('../../../src/presentation/errors')
-const { LoginRouter } = require('../../../src/presentation/routers')
+const { LoginController } = require('../../../src/presentation/controllers')
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCaseSpy()
   const validationSpy = makeValidationSpy()
-  const sut = new LoginRouter({
+  const sut = new LoginController({
     authUseCase: authUseCaseSpy,
     validation: validationSpy
   })
@@ -68,7 +68,7 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if no AuthUseCase is provided', async () => {
-    const sut = new LoginRouter({
+    const sut = new LoginController({
       validation: makeValidationSpy()
     })
     const httpRequest = makeHttpRequest()
@@ -78,7 +78,7 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if an invalid AuthUseCase is provided', async () => {
-    const sut = new LoginRouter({
+    const sut = new LoginController({
       authUseCase: {},
       validation: makeValidationSpy()
     })
@@ -89,7 +89,7 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if no Validation is provided', async () => {
-    const sut = new LoginRouter({
+    const sut = new LoginController({
       authUseCase: makeAuthUseCaseSpy()
     })
     const httpRequest = makeHttpRequest()
@@ -99,7 +99,7 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if an invalid Validation is provided', async () => {
-    const sut = new LoginRouter({
+    const sut = new LoginController({
       authUseCase: makeAuthUseCaseSpy(),
       validation: {}
     })
@@ -110,7 +110,7 @@ describe('Login Router', () => {
   })
 
   test('Should return 500 if no dependencies are provided', async () => {
-    const sut = new LoginRouter()
+    const sut = new LoginController()
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)

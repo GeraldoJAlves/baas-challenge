@@ -1,6 +1,6 @@
 const { HttpHelper } = require('../helpers')
 
-module.exports = class LoginRouter {
+module.exports = class LoginController {
   constructor ({ authUseCase, validation } = {}) {
     this.authUseCase = authUseCase
     this.validation = validation
