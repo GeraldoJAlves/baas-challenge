@@ -18,5 +18,10 @@ module.exports = {
 
   getCollection (name) {
     return this.client.db().collection(name)
+  },
+
+  map: (data) => {
+    const { _id, ...rest } = data
+    return { ...rest, id: _id.toHexString() }
   }
 }
