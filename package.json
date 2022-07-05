@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "jest --silent --noStackTrace --passWithNoTests",
+    "test": "jest --silent --noStackTrace --passWithNoTests --detectOpenHandles",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@shelf/jest-mongodb": "^3.0.2",
     "husky": "^8.0.0",
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
