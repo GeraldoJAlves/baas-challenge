@@ -191,6 +191,13 @@ describe('Auth UseCase', () => {
     expect(hashComparerSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
 
+  test('Should return null if HashComparer returns false', async () => {
+    const { sut, hashComparerSpy } = makeSut()
+    hashComparerSpy.isValid = false
+    const accessToken = await sut.auth('valid_email@email.com', 'any_password')
+    expect(accessToken).toBeFalsy()
+  })
+
   test('Should call Encrypter with correct userId', async () => {
     const { sut, encrypterSpy, loadUserByEmailRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'any_password')
