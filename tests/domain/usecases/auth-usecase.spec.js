@@ -44,7 +44,7 @@ const makeLoadUserByEmailRepositorySpy = () => {
       password: 'hashed_password'
     }
 
-    async load (email) {
+    async loadByEmail (email) {
       this.email = email
       return this.user
     }
@@ -54,7 +54,7 @@ const makeLoadUserByEmailRepositorySpy = () => {
 
 const makeLoadUserByEmailRepositoryThrowError = () => {
   class LoadUserByEmailRepositorySpy {
-    async load () {
+    async loadByEmail () {
       throw new Error()
     }
   }

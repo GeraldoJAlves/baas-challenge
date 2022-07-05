@@ -16,7 +16,7 @@ module.exports = class AuthUseCase {
   async auth (email, password) {
     if (!email) throw new MissingParamError('email')
     if (!password) throw new MissingParamError('password')
-    const user = await this.loadUserByEmailRepository.load(email)
+    const user = await this.loadUserByEmailRepository.loadByEmail(email)
     if (!user) return null
     const isValid = await this.hashComparer.compare(password, user.password)
     if (!isValid) return null
