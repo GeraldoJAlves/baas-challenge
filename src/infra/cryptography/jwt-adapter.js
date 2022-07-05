@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { InvalidParamError } = require('../../presentation/errors')
+const { MissingParamError } = require('../../presentation/errors')
 
 module.exports = class JwtAdapter {
   constructor (secret) {
@@ -7,8 +7,8 @@ module.exports = class JwtAdapter {
   }
 
   async encrypt (id) {
-    if (!this.secret) throw new InvalidParamError('secret')
-    if (!id) throw new InvalidParamError('id')
-    await jwt.sign({ id }, this.secret)
+    if (!this.secret) throw new MissingParamError('secret')
+    if (!id) throw new MissingParamError('id')
+    return await jwt.sign({ id }, this.secret)
   }
 }
