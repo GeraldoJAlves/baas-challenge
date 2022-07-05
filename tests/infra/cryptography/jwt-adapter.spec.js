@@ -14,6 +14,12 @@ describe('Jwt Adapter', () => {
     expect(jwt.secret).toBe('valid_secret')
   })
 
+  test('Should return token when jsonwebtoken returns a token', async () => {
+    const { sut } = makeSut('valid_secret')
+    const token = await sut.encrypt('any_id')
+    expect(token).toBe(jwt.token)
+  })
+
   test('Should throw if no secret is provided', async () => {
     const { sut } = makeSut('')
     const promise = sut.encrypt('any_id')
