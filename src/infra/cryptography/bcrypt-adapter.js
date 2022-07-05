@@ -5,6 +5,6 @@ module.exports = class BcryptAdapater {
   async compare (plaintext, digest) {
     if (!plaintext) throw new MissingParamError('plaintext')
     if (!digest) throw new MissingParamError('digest')
-    await bcrypt.compare(plaintext, digest)
+    return await bcrypt.compare(plaintext, digest)
   }
 }
