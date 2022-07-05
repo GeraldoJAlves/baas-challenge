@@ -14,6 +14,12 @@ describe('Bcrypt Adapter', () => {
     expect(bcrypt.digest).toBe('hashed_password')
   })
 
+  test('Should return true when Bcrypt return true', async () => {
+    const { sut } = makeSut()
+    const isValid = await sut.compare('any_password', 'hashed_password')
+    expect(isValid).toBeTruthy()
+  })
+
   test('Should throw if no digest is provided', async () => {
     const { sut } = makeSut()
     const promise = sut.compare('any_password')
