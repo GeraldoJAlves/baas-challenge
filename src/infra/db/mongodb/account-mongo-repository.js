@@ -1,5 +1,7 @@
+const MongoHelper = require('./mongo-helper')
+
 module.exports = class AccountMongoRepository {
   async loadByEmail (email) {
-    return null
+    return await MongoHelper.getCollection('accounts').findOne({ email })
   }
 }
