@@ -14,6 +14,18 @@ describe('Bcrypt Adapter', () => {
     expect(bcrypt.digest).toBe('hashed_password')
   })
 
+  test('Should throw if no digest is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.compare('any_password')
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if no plaintext is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.compare()
+    expect(promise).rejects.toThrow()
+  })
+
   test('Should throw if Bcrypt throws', async () => {
     const { sut } = makeSut()
     bcrypt.compare = async () => { throw new Error() }
