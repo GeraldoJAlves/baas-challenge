@@ -25,4 +25,11 @@ describe('Email Validator Adapter', () => {
     const isValid = sut.isValid('invalid_email@email.com')
     expect(isValid).toBeFalsy()
   })
+
+  test('Should throw if Validator throws', async () => {
+    const { sut } = makeSut()
+    validator.isEmail = async () => { throw new Error() }
+    const promise = sut.isValid('any_email@email.com')
+    expect(promise).rejects.toThrow()
+  })
 })
