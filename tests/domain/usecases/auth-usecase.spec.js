@@ -4,36 +4,36 @@ const { MissingParamError } = require('../../../src/presentation/errors')
 const makeSut = () => {
   const {
     loadUserByEmailRepository,
+    hashComparer,
     encrypter,
-    tokenGenerator,
     updateAccessTokenRepository
   } = makeDependencies()
   const sut = new AuthUseCase({
     loadUserByEmailRepository,
+    hashComparer,
     encrypter,
-    tokenGenerator,
     updateAccessTokenRepository
   })
   return {
     sut,
     loadUserByEmailRepositorySpy: loadUserByEmailRepository,
+    hashComparerSpy: hashComparer,
     encrypterSpy: encrypter,
-    tokenGeneratorSpy: tokenGenerator,
     updateAccessTokenRepositorySpy: updateAccessTokenRepository
   }
 }
 
 const makeDependencies = () => ({
   loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+  hashComparer: makeHashComparerSpy(),
   encrypter: makeEncrypterSpy(),
-  tokenGenerator: makeTokenGeneratorSpy(),
   updateAccessTokenRepository: makeUpdateAccessTokenRepositorySpy()
 })
 
 const makeDependenciesThrowError = () => ({
   loadUserByEmailRepository: makeLoadUserByEmailRepositoryThrowError(),
+  hashComparer: makeHashComparerThrowError(),
   encrypter: makeEncrypterThrowError(),
-  tokenGenerator: makeTokenGeneratorThrowError(),
   updateAccessTokenRepository: makeUpdateAccessTokenRepositoryThrowError()
 })
 
@@ -63,11 +63,10 @@ const makeLoadUserByEmailRepositoryThrowError = () => {
 
 const makeEncrypterSpy = () => {
   class EncrypterSpy {
-    isValid = true
-    compare (password, hashedPassword) {
-      this.password = password
-      this.hashedPassword = hashedPassword
-      return this.isValid
+    accessToken = 'any_token'
+    async encrypt (userId) {
+      this.userId = userId
+      return this.accessToken
     }
   }
   return new EncrypterSpy()
@@ -75,31 +74,32 @@ const makeEncrypterSpy = () => {
 
 const makeEncrypterThrowError = () => {
   class EncrypterSpy {
-    compare () {
+    async encrypt () {
       throw new Error()
     }
   }
   return new EncrypterSpy()
 }
 
-const makeTokenGeneratorSpy = () => {
-  class TokenGeneratorSpy {
-    accessToken = 'any_token'
-    async generate (userId) {
-      this.userId = userId
-      return this.accessToken
+const makeHashComparerSpy = () => {
+  class HashComparerSpy {
+    isValid = true
+    async compare (password, hashedPassword) {
+      this.password = password
+      this.hashedPassword = hashedPassword
+      return this.isValid
     }
   }
-  return new TokenGeneratorSpy()
+  return new HashComparerSpy()
 }
 
-const makeTokenGeneratorThrowError = () => {
-  class TokenGeneratorSpy {
-    async generate () {
+const makeHashComparerThrowError = () => {
+  class HashComparerSpy {
+    async compare () {
       throw new Error()
     }
   }
-  return new TokenGeneratorSpy()
+  return new HashComparerSpy()
 }
 
 const makeUpdateAccessTokenRepositorySpy = () => {
@@ -184,30 +184,30 @@ describe('Auth UseCase', () => {
     expect(accessToken).toBeNull()
   })
 
-  test('Should call Encrypter with correct values', async () => {
-    const { sut, encrypterSpy, loadUserByEmailRepositorySpy } = makeSut()
+  test('Should call HashComparer with correct values', async () => {
+    const { sut, hashComparerSpy, loadUserByEmailRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'any_password')
-    expect(encrypterSpy.password).toBe('any_password')
-    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
+    expect(hashComparerSpy.password).toBe('any_password')
+    expect(hashComparerSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
 
-  test('Should call TokenGenerator with correct userId', async () => {
-    const { sut, tokenGeneratorSpy, loadUserByEmailRepositorySpy } = makeSut()
+  test('Should call Encrypter with correct userId', async () => {
+    const { sut, encrypterSpy, loadUserByEmailRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'any_password')
-    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+    expect(encrypterSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 
   test('Should return an accessToken if correct credentials are provided', async () => {
-    const { sut, tokenGeneratorSpy } = makeSut()
+    const { sut, encrypterSpy } = makeSut()
     const accessToken = await sut.auth('valid_email@email.com', 'valid_password')
-    expect(accessToken).toBe(tokenGeneratorSpy.accessToken)
+    expect(accessToken).toBe(encrypterSpy.accessToken)
     expect(accessToken).toBeTruthy()
   })
 
   test('Should call UpdateAccessTokenRepository with correct values', async () => {
-    const { sut, tokenGeneratorSpy, loadUserByEmailRepositorySpy, updateAccessTokenRepositorySpy } = makeSut()
+    const { sut, encrypterSpy, loadUserByEmailRepositorySpy, updateAccessTokenRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'valid_password')
-    expect(updateAccessTokenRepositorySpy.accessToken).toBe(tokenGeneratorSpy.accessToken)
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe(encrypterSpy.accessToken)
     expect(updateAccessTokenRepositorySpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 })
