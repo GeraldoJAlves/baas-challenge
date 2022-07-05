@@ -5,13 +5,19 @@ const makeSut = () => {
   return { sut }
 }
 
-const mockAccount = () => {
-  MongoHelper.getCollection('accounts').insertOne({ email: 'valid_email@email.com', name: 'any_name' })
+const mockAccount = async () => {
+  const fakeAccount = { email: 'valid_email@email.com', name: 'any_name', password: 'hashed_password' }
+  await MongoHelper.getCollection('accounts').insertOne(fakeAccount)
+  return MongoHelper.map(fakeAccount)
 }
 
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
     await MongoHelper.connect(global.__MONGO_URI__)
+  })
+
+  beforeEach(async () => {
+    await MongoHelper.getCollection('accounts').deleteMany()
   })
 
   afterAll(async () => {
@@ -27,9 +33,9 @@ describe('Account Mongo Repository', () => {
 
     test('Should return an user if user is found', async () => {
       const { sut } = makeSut()
-      mockAccount()
-      const user = await sut.loadByEmail('valid_email@email.com')
-      expect(user.email).toBe('valid_email@email.com')
+      const { id, name, password } = await mockAccount()
+      const account = await sut.loadByEmail('valid_email@email.com')
+      expect(account).toEqual({ id, name, password })
     })
   })
 })
