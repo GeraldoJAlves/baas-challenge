@@ -1,7 +1,9 @@
 const MongoHelper = require('./mongo-helper')
+const { MissingParamError } = require('../../../presentation/errors')
 
 module.exports = class AccountMongoRepository {
   async loadByEmail (email) {
+    if (!email) throw new MissingParamError('email')
     const account = await MongoHelper
       .getCollection('accounts')
       .findOne({
