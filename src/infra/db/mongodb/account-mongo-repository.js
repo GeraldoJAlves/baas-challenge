@@ -18,4 +18,9 @@ module.exports = class AccountMongoRepository {
     if (!account) return null
     return MongoHelper.map(account)
   }
+
+  async updateAccessToken (id, token) {
+    if (!id) throw new MissingParamError('id')
+    if (!token) throw new MissingParamError('token')
+  }
 }
