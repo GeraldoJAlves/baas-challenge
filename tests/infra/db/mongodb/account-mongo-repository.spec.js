@@ -44,4 +44,18 @@ describe('Account Mongo Repository', () => {
       expect(promise).rejects.toThrow()
     })
   })
+
+  describe('updateAccessToken()', () => {
+    test('Should throw if no id is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.updateAccessToken()
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no token is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.updateAccessToken('any_id')
+      expect(promise).rejects.toThrow()
+    })
+  })
 })
