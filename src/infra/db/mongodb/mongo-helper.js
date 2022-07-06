@@ -22,6 +22,6 @@ module.exports = {
 
   map: (data) => {
     const { _id, ...rest } = data
-    return { ...rest, id: _id.toHexString() }
+    return { ...rest, id: _id }
   }
 }

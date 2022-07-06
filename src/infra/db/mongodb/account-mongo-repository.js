@@ -22,5 +22,6 @@ module.exports = class AccountMongoRepository {
   async updateAccessToken (id, token) {
     if (!id) throw new MissingParamError('id')
     if (!token) throw new MissingParamError('token')
+    await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { accessToken: token } })
   }
 }
