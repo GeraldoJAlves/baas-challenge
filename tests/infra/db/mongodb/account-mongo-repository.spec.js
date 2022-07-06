@@ -57,5 +57,14 @@ describe('Account Mongo Repository', () => {
       const promise = sut.updateAccessToken('any_id')
       expect(promise).rejects.toThrow()
     })
+
+    test('Should update the account with the given token', async () => {
+      const { sut } = makeSut()
+      const { id } = await mockAccount()
+      await sut.updateAccessToken(id, 'valid_token')
+
+      const account = await MongoHelper.getCollection('accounts').findOne({ _id: id })
+      expect(account.accessToken).toBe('valid_token')
+    })
   })
 })
