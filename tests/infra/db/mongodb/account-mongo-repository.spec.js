@@ -37,5 +37,11 @@ describe('Account Mongo Repository', () => {
       const account = await sut.loadByEmail('valid_email@email.com')
       expect(account).toEqual({ id, name, password })
     })
+
+    test('Should throw if no email is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.loadByEmail()
+      expect(promise).rejects.toThrow()
+    })
   })
 })
