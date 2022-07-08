@@ -5,21 +5,20 @@ describe('App Setup', () => {
   test('Should disable x-powered-by header', async () => {
     const app = await setupApp()
     app.get('/test_x_powered_by', (req, res) => res.send(''))
-    const response = await supertest(app)
+    const { headers } = await supertest(app)
       .get('/test_x_powered_by')
 
-    expect(response.headers['x-powered-by']).toBeUndefined()
+    expect(headers['x-powered-by']).toBeUndefined()
   })
 
   test('Should enable CORS', async () => {
     const app = await setupApp()
     app.get('/test_cors', (req, res) => res.send(''))
-    const response = await supertest(app)
+    await supertest(app)
       .get('/test_cors')
-
-    expect(response.headers['access-control-allow-origin']).toBe('*')
-    expect(response.headers['access-control-allow-headers']).toBe('*')
-    expect(response.headers['access-control-allow-methods']).toBe('*')
+      .expect('access-control-allow-origin', '*')
+      .expect('access-control-allow-headers', '*')
+      .expect('access-control-allow-methods', '*')
   })
 
   test('Should body parser as json', async () => {
@@ -33,5 +32,16 @@ describe('App Setup', () => {
       .send({ field: 'any_value' })
 
     expect(response.body).toEqual({ field: 'any_value' })
+  })
+
+  test('Should return content type as json', async () => {
+    const app = await setupApp()
+    app.get('/test_content_type', (req, res) => {
+      res.send('')
+    })
+
+    await supertest(app)
+      .get('/test_content_type')
+      .expect('content-type', /json/)
   })
 })
