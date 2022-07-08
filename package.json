@@ -1,9 +1,9 @@
 {
-  "name": "clean",
+  "name": "baas-challenge",
   "version": "1.0.0",
   "description": "",
   "author": "Geraldo Alves",
-  "main": "index.js",
+  "main": "src/main/server.js",
   "scripts": {
     "prepare": "husky install",
     "test": "jest --silent --noStackTrace --passWithNoTests --detectOpenHandles",
@@ -26,7 +26,8 @@
     "husky": "^8.0.0",
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
-    "standard": "^17.0.0"
+    "standard": "^17.0.0",
+    "supertest": "^6.2.4"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
