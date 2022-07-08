@@ -6,7 +6,7 @@
   "main": "src/main/server.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "jest --silent --noStackTrace --passWithNoTests --detectOpenHandles",
+    "test": "jest --silent --noStackTrace --passWithNoTests --detectOpenHandles --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
