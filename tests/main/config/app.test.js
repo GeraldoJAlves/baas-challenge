@@ -21,4 +21,17 @@ describe('App Setup', () => {
     expect(response.headers['access-control-allow-headers']).toBe('*')
     expect(response.headers['access-control-allow-methods']).toBe('*')
   })
+
+  test('Should body parser as json', async () => {
+    const app = await setupApp()
+    app.post('/test_body_parser', (req, res) => {
+      res.send(req.body)
+    })
+
+    const response = await supertest(app)
+      .post('/test_body_parser')
+      .send({ field: 'any_value' })
+
+    expect(response.body).toEqual({ field: 'any_value' })
+  })
 })
