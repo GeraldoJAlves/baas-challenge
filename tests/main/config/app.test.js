@@ -43,4 +43,16 @@ describe('App Setup', () => {
       .get('/test_content_type')
       .expect('content-type', /json/)
   })
+
+  test('Should return xml content-type if forced', async () => {
+    const app = await setupApp()
+    app.get('/test_content_type', (req, res) => {
+      res.type('xml')
+      res.send('')
+    })
+
+    await supertest(app)
+      .get('/test_content_type')
+      .expect('content-type', /xml/)
+  })
 })
