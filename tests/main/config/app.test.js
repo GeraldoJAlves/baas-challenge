@@ -27,11 +27,10 @@ describe('App Setup', () => {
       res.send(req.body)
     })
 
-    const response = await supertest(app)
+    await supertest(app)
       .post('/test_body_parser')
       .send({ field: 'any_value' })
-
-    expect(response.body).toEqual({ field: 'any_value' })
+      .expect({ field: 'any_value' })
   })
 
   test('Should return content type as json', async () => {
