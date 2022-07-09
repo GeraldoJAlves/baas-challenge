@@ -33,6 +33,12 @@ module.exports = class AccountMongoRepository {
     return account !== null
   }
 
+  async add ({ name, email, password } = {}) {
+    if (!name) throw new MissingParamError('name')
+    if (!email) throw new MissingParamError('email')
+    if (!password) throw new MissingParamError('password')
+  }
+
   async updateAccessToken (id, token) {
     if (!id) throw new MissingParamError('id')
     if (!token) throw new MissingParamError('token')
