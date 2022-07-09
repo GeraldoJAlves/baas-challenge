@@ -3,14 +3,17 @@ const { AddAccountUseCase } = require('../../../src/domain/usecases')
 const makeSut = () => {
   const checkAccountByEmailRepositorySpy = makeCheckAccountByEmailRepositorySpy()
   const hasherSpy = makeHasherSpy()
+  const addAccountRepositorySpy = makeAddAccountRepositorySpy()
   const sut = new AddAccountUseCase({
     checkAccountByEmailRepository: checkAccountByEmailRepositorySpy,
-    hasher: hasherSpy
+    hasher: hasherSpy,
+    addAccountRepository: addAccountRepositorySpy
   })
   return {
     sut,
     checkAccountByEmailRepositorySpy,
-    hasherSpy
+    hasherSpy,
+    addAccountRepositorySpy
   }
 }
 
@@ -22,6 +25,19 @@ const makeCheckAccountByEmailRepositorySpy = () => {
     }
   }
   return new CheckAccountByEmailRepository()
+}
+
+const makeAddAccountRepositorySpy = () => {
+  class AddAccountRepository {
+    isValid = true
+    async add ({ name, email, password }) {
+      this.name = name
+      this.email = email
+      this.password = password
+      return this.isValid
+    }
+  }
+  return new AddAccountRepository()
 }
 
 const makeHasherSpy = () => {
@@ -152,5 +168,17 @@ describe('Add Account Usecase', () => {
       password: 'any_password'
     })
     expect(promise).rejects.toThrow()
+  })
+
+  test('Should call addAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositorySpy, hasherSpy } = makeSut()
+    await sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(addAccountRepositorySpy.name).toBe('any_name')
+    expect(addAccountRepositorySpy.email).toBe('any_email@email.com')
+    expect(addAccountRepositorySpy.password).toBe(hasherSpy.encryptedHash)
   })
 })
