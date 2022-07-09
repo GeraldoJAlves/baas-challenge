@@ -1,4 +1,4 @@
-const { InvalidParamError } = require('../../presentation/errors')
+const { InvalidParamError, MissingParamError } = require('../../presentation/errors')
 
 module.exports = class CompareFieldsValidation {
   constructor (fieldName, fieldToCompareName) {
@@ -7,6 +7,8 @@ module.exports = class CompareFieldsValidation {
   }
 
   validate (input) {
+    if (input[this.fieldName] === undefined) return new MissingParamError(this.fieldName)
+    if (input[this.fieldToCompareName] === undefined) return new MissingParamError(this.fieldToCompareName)
     if (input[this.fieldName] !== input[this.fieldToCompareName]) {
       return new InvalidParamError(this.fieldToCompareName)
     }
