@@ -1,11 +1,11 @@
-const makeLoginValidation = require('./login-validation-factory')
-const makeAuthentication = require('../usecases/authentication-factory')
-
 const { LoginController } = require('../../../presentation/controllers')
+
+const { makeAuthUseCase } = require('../usecases')
+const makeLoginValidation = require('./login-validation-factory')
 
 module.exports = () => {
   return new LoginController({
-    authUseCase: makeAuthentication(),
+    authUseCase: makeAuthUseCase(),
     validation: makeLoginValidation()
   })
 }
