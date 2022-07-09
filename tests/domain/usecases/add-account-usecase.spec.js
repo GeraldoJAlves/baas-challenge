@@ -22,7 +22,7 @@ const makeCheckAccountByEmailRepositorySpy = () => {
 }
 
 describe('Add Account Usecase', () => {
-  test('Should throw if no email is provided ', async () => {
+  test('Should throw if no email is provided', async () => {
     const { sut } = makeSut()
     const promise = sut.add({
       name: 'any_name',
@@ -31,7 +31,7 @@ describe('Add Account Usecase', () => {
     expect(promise).rejects.toThrow()
   })
 
-  test('Should throw if no email is provided ', async () => {
+  test('Should throw if no email is provided', async () => {
     const { sut } = makeSut()
     const promise = sut.add({
       email: 'any_email@email.com',
@@ -40,11 +40,31 @@ describe('Add Account Usecase', () => {
     expect(promise).rejects.toThrow()
   })
 
-  test('Should throw if no password is provided ', async () => {
+  test('Should throw if no password is provided', async () => {
     const { sut } = makeSut()
     const promise = sut.add({
       email: 'any_email@email.com',
       name: 'any_name'
+    })
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if no checkAccountByEmailRepository is provided', async () => {
+    const sut = new AddAccountUseCase()
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if an invalid checkAccountByEmailRepository is provided', async () => {
+    const sut = new AddAccountUseCase({})
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
     })
     expect(promise).rejects.toThrow()
   })
