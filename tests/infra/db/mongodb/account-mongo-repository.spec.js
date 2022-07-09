@@ -93,6 +93,19 @@ describe('Account Mongo Repository', () => {
       })
       expect(promise).rejects.toThrow()
     })
+
+    test('Should insert account if valid params are provided', async () => {
+      const { sut } = makeSut()
+      await sut.add({
+        email: 'any_email@email.com',
+        name: 'any_name',
+        password: 'hashed_password'
+      })
+      const account = await MongoHelper.getCollection('accounts').findOne({ email: 'any_email@email.com' })
+      expect(account).toBeTruthy()
+      expect(account.name).toBe('any_name')
+      expect(account.password).toBe('hashed_password')
+    })
   })
 
   describe('updateAccessToken()', () => {
