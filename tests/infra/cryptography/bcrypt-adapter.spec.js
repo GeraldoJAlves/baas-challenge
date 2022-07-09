@@ -20,6 +20,25 @@ describe('Bcrypt Adapter', () => {
       const hashedText = await sut.hash('any_password')
       expect(hashedText).toBe(bcrypt.hashedText)
     })
+
+    test('Should throw if no salt is provided', async () => {
+      const sut = new BcryptAdapater()
+      const promise = sut.hash('any_password')
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no plaintext is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.hash()
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if Bcrypt throws', async () => {
+      const { sut } = makeSut()
+      bcrypt.hash = async () => { throw new Error() }
+      const promise = sut.hash('any_password')
+      expect(promise).rejects.toThrow()
+    })
   })
 
   describe('compare()', () => {
