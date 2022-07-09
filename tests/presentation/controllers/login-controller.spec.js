@@ -52,7 +52,7 @@ const makeHttpRequestWithInvalidCredentials = () => ({
   }
 })
 
-describe('Login Router', () => {
+describe('Login Controller', () => {
   test('Should return 500 if no HttpRequest is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle()
