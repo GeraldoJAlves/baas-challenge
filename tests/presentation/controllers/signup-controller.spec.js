@@ -3,12 +3,15 @@ const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const addAccountUseCaseSpy = makeAddAccountUseCaseSpy()
+  const validationSpy = makeValidationSpy()
   const sut = new SignupController({
-    addAccountUseCase: addAccountUseCaseSpy
+    addAccountUseCase: addAccountUseCaseSpy,
+    validation: validationSpy
   })
   return {
     sut,
-    addAccountUseCaseSpy
+    addAccountUseCaseSpy,
+    validationSpy
   }
 }
 
@@ -23,6 +26,16 @@ const makeAddAccountUseCaseSpy = () => {
   }
 
   return new AddAccountUseCaseSpy()
+}
+
+const makeValidationSpy = () => {
+  class ValidationSpy {
+    validate (input) {
+      this.input = input
+      return this.error
+    }
+  }
+  return new ValidationSpy()
 }
 
 const makeHttpRequest = () => ({
@@ -58,5 +71,12 @@ describe('Signup Controller', () => {
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should call validation with correct values', async () => {
+    const { sut, validationSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+    expect(validationSpy.input).toBe(httpRequest.body)
   })
 })
