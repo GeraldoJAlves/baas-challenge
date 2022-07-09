@@ -1,12 +1,21 @@
 const { BcryptAdapater } = require('../../../src/infra/cryptography')
 const bcrypt = require('bcrypt')
 
-const makeSut = () => {
-  const sut = new BcryptAdapater()
+const makeSut = (salt = 'any_salt') => {
+  const sut = new BcryptAdapater(salt)
   return { sut }
 }
 
 describe('Bcrypt Adapter', () => {
+  describe('hash()', () => {
+    test('Should call Bcrypt with correct values', async () => {
+      const { sut } = makeSut('valid_salt')
+      await sut.hash('any_password')
+      expect(bcrypt.plaintext).toBe('any_password')
+      expect(bcrypt.salt).toBe('valid_salt')
+    })
+  })
+
   describe('compare()', () => {
     test('Should call Bcrypt with correct value', async () => {
       const { sut } = makeSut()

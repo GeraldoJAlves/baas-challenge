@@ -1,6 +1,12 @@
 module.exports = {
   isValid: true,
-  async compare (plaintext, digest) {
+  hashedText: 'hashed_text',
+  hash (plaintext, salt) {
+    this.plaintext = plaintext
+    this.salt = salt
+    return this.hashedText
+  },
+  compare (plaintext, digest) {
     this.plaintext = plaintext
     this.digest = digest
     return this.isValid
