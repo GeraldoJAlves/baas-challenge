@@ -106,6 +106,16 @@ describe('Account Mongo Repository', () => {
       expect(account.name).toBe('any_name')
       expect(account.password).toBe('hashed_password')
     })
+
+    test('Should return true if account is inserted', async () => {
+      const { sut } = makeSut()
+      const isValid = await sut.add({
+        email: 'any_email@email.com',
+        name: 'any_name',
+        password: 'hashed_password'
+      })
+      expect(isValid).toBeTruthy()
+    })
   })
 
   describe('updateAccessToken()', () => {
