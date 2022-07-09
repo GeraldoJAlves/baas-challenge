@@ -37,6 +37,7 @@ module.exports = class AccountMongoRepository {
     if (!name) throw new MissingParamError('name')
     if (!email) throw new MissingParamError('email')
     if (!password) throw new MissingParamError('password')
+    MongoHelper.getCollection('accounts').insertOne({ name, email, password })
   }
 
   async updateAccessToken (id, token) {
