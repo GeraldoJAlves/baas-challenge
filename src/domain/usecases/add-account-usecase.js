@@ -9,6 +9,7 @@ module.exports = class AddAccountUseCase {
     if (!email) throw new MissingParamError('email')
     if (!name) throw new MissingParamError('name')
     if (!password) throw new MissingParamError('password')
-    await this.checkAccountByEmailRepository.checkByEmail(email)
+    const exists = await this.checkAccountByEmailRepository.checkByEmail(email)
+    if (exists) return false
   }
 }
