@@ -14,6 +14,12 @@ describe('Bcrypt Adapter', () => {
       expect(bcrypt.plaintext).toBe('any_password')
       expect(bcrypt.salt).toBe('valid_salt')
     })
+
+    test('Should return hashed text when Bcrypt returns a hashed text', async () => {
+      const { sut } = makeSut()
+      const hashedText = await sut.hash('any_password')
+      expect(hashedText).toBe(bcrypt.hashedText)
+    })
   })
 
   describe('compare()', () => {
