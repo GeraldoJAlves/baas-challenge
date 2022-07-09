@@ -1,7 +1,7 @@
 const { MissingParamError } = require('../../presentation/errors')
 
 module.exports = class AddAccountUseCase {
-  constructor ({ checkAccountByEmailRepository }) {
+  constructor ({ checkAccountByEmailRepository } = {}) {
     this.checkAccountByEmailRepository = checkAccountByEmailRepository
   }
 
@@ -9,5 +9,6 @@ module.exports = class AddAccountUseCase {
     if (!email) throw new MissingParamError('email')
     if (!name) throw new MissingParamError('name')
     if (!password) throw new MissingParamError('password')
+    await this.checkAccountByEmailRepository.check(email)
   }
 }
