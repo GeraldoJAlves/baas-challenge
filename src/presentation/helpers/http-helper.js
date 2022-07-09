@@ -10,7 +10,7 @@ module.exports = class HttpHelper {
 
   static serverError (error) {
     return {
-      body: new ServerError(error.stack),
+      body: new ServerError(error?.stack),
       statusCode: 500
     }
   }
