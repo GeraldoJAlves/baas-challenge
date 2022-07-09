@@ -7,6 +7,8 @@ module.exports = class BcryptAdapater {
   }
 
   async hash (plaintext) {
+    if (!this.salt) throw new MissingParamError('salt')
+    if (!plaintext) throw new MissingParamError('plaintext')
     return bcrypt.hash(plaintext, this.salt)
   }
 
