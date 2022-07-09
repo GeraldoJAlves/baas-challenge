@@ -3,9 +3,11 @@ const { MissingParamError } = require('../../presentation/errors')
 module.exports = class AddAccountUseCase {
   constructor ({
     checkAccountByEmailRepository,
+    addAccountRepository,
     hasher
   } = {}) {
     this.checkAccountByEmailRepository = checkAccountByEmailRepository
+    this.addAccountRepository = addAccountRepository
     this.hasher = hasher
   }
 
@@ -15,6 +17,7 @@ module.exports = class AddAccountUseCase {
     if (!password) throw new MissingParamError('password')
     const exists = await this.checkAccountByEmailRepository.checkByEmail(email)
     if (exists) return false
-    await this.hasher.hash(password)
+    const hashedPassword = await this.hasher.hash(password)
+    return await this.addAccountRepository.add({ name, email, password: hashedPassword })
   }
 }
