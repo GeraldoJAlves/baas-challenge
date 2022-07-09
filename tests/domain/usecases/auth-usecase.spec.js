@@ -104,7 +104,7 @@ const makeHashComparerThrowError = () => {
 
 const makeUpdateAccessTokenRepositorySpy = () => {
   class UpdateAccessTokenRepositorySpy {
-    async update (userId, accessToken) {
+    async updateAccessToken (userId, accessToken) {
       this.userId = userId
       this.accessToken = accessToken
     }
@@ -114,7 +114,7 @@ const makeUpdateAccessTokenRepositorySpy = () => {
 
 const makeUpdateAccessTokenRepositoryThrowError = () => {
   class UpdateAccessTokenRepositorySpy {
-    async update () {
+    async updateAccessToken () {
       throw new Error()
     }
   }
