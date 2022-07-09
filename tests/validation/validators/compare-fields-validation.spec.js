@@ -16,4 +16,14 @@ describe('Compare Fields Validation', () => {
     })
     expect(error).toEqual(new InvalidParamError('field2'))
   })
+
+  test('Should return fasly if input have equal fields', () => {
+    const { sut } = makeSut('field1', 'field3')
+    const error = sut.validate({
+      field1: 'ab',
+      field2: 'ac',
+      field3: 'ab'
+    })
+    expect(error).toBeFalsy()
+  })
 })
