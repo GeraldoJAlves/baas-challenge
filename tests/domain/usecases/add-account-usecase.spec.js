@@ -78,4 +78,15 @@ describe('Add Account Usecase', () => {
     })
     expect(checkAccountByEmailRepositorySpy.email).toBe('any_email@email.com')
   })
+
+  test('Should return false if checkAccountByEmailRepository returns true', async () => {
+    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+    checkAccountByEmailRepositorySpy.exists = true
+    const isValid = await sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(isValid).toBeFalsy()
+  })
 })
