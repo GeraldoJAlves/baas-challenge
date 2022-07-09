@@ -1,4 +1,5 @@
 const { SignupController } = require('../../../src/presentation/controllers')
+const { MissingParamError } = require('../../../src/presentation/errors')
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
@@ -78,5 +79,13 @@ describe('Signup Controller', () => {
     const httpRequest = makeHttpRequest()
     await sut.handle(httpRequest)
     expect(validationSpy.input).toBe(httpRequest.body)
+  })
+
+  test('Should return 400 if validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new MissingParamError('email')
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 })
