@@ -81,7 +81,8 @@ describe('Add Account Usecase', () => {
 
   test('Should throw if no checkAccountByEmailRepository is provided', async () => {
     const sut = new AddAccountUseCase({
-      hasher: makeHasherSpy()
+      hasher: makeHasherSpy(),
+      addAccountRepository: makeAddAccountRepositorySpy()
     })
     const promise = sut.add({
       name: 'any_name',
@@ -94,6 +95,7 @@ describe('Add Account Usecase', () => {
   test('Should throw if an invalid checkAccountByEmailRepository is provided', async () => {
     const sut = new AddAccountUseCase({
       hasher: makeHasherSpy(),
+      addAccountRepository: makeAddAccountRepositorySpy(),
       AddAccountUseCase: {}
     })
     const promise = sut.add({
@@ -147,7 +149,8 @@ describe('Add Account Usecase', () => {
 
   test('Should throw if no hasher is provided', async () => {
     const sut = new AddAccountUseCase({
-      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy()
+      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
+      addAccountRepository: makeAddAccountRepositorySpy()
     })
     const promise = sut.add({
       name: 'any_name',
@@ -160,6 +163,7 @@ describe('Add Account Usecase', () => {
   test('Should throw if an invalid hasher is provided', async () => {
     const sut = new AddAccountUseCase({
       checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
+      addAccountRepository: makeAddAccountRepositorySpy(),
       hasher: {}
     })
     const promise = sut.add({
@@ -180,5 +184,32 @@ describe('Add Account Usecase', () => {
     expect(addAccountRepositorySpy.name).toBe('any_name')
     expect(addAccountRepositorySpy.email).toBe('any_email@email.com')
     expect(addAccountRepositorySpy.password).toBe(hasherSpy.encryptedHash)
+  })
+
+  test('Should throw if no addAccountRepository is provided', async () => {
+    const sut = new AddAccountUseCase({
+      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
+      hasher: makeHasherSpy()
+    })
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if an invalid addAccountRepository is provided', async () => {
+    const sut = new AddAccountUseCase({
+      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
+      hasher: makeHasherSpy(),
+      addAccountRepository: {}
+    })
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
   })
 })
