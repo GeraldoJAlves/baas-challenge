@@ -46,4 +46,12 @@ describe('Validation Composite', () => {
     const error = sut.validate({ field: 'any_data' })
     expect(error).toBeFalsy()
   })
+
+  test('Should call validations with correct input', () => {
+    const { sut, validationSpies } = makeSut()
+    const input = { field: 'any_data' }
+    sut.validate(input)
+    expect(validationSpies[0].input).toEqual(input)
+    expect(validationSpies[1].input).toEqual(input)
+  })
 })
