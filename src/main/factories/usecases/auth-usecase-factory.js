@@ -1,16 +1,16 @@
 const { AuthUseCase } = require('../../../domain/usecases')
 const { BcryptAdapater, JwtAdapter } = require('../../../infra/cryptography')
 const { AccountMongoRepository } = require('../../../infra/db/mongodb')
-const { jwtSecret } = require('../../config/env')
+const { jwtSecret, salt } = require('../../config/env')
 
 module.exports = () => {
-  const bcryptAdpater = new BcryptAdapater()
+  const bcryptAdpater = new BcryptAdapater(salt)
   const jwtAdapter = new JwtAdapter(jwtSecret)
   const accountMongoRepository = new AccountMongoRepository()
   return new AuthUseCase({
     loadUserByEmailRepository: accountMongoRepository,
-    encrypter: bcryptAdpater,
-    hashComparer: jwtAdapter,
+    encrypter: jwtAdapter,
+    hashComparer: bcryptAdpater,
     updateAccessTokenRepository: accountMongoRepository
   })
 }
