@@ -15,6 +15,13 @@ module.exports = class HttpHelper {
     }
   }
 
+  static forbidden (error) {
+    return {
+      body: error,
+      statusCode: 403
+    }
+  }
+
   static unauthorized () {
     return {
       body: new UnauthorizedError(),
