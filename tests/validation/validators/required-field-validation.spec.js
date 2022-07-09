@@ -1,8 +1,8 @@
 const { MissingParamError } = require('../../../src/presentation/errors')
-const { RequiredField } = require('../../../src/validation/validators')
+const { RequiredFieldValidation } = require('../../../src/validation/validators')
 
 const makeSut = (field = 'email') => {
-  const sut = new RequiredField(field)
+  const sut = new RequiredFieldValidation(field)
   return {
     sut
   }
@@ -13,7 +13,7 @@ const makeInput = () => ({
   password: 'any_email@email.com'
 })
 
-describe('Required Field', () => {
+describe('Required Field Validation', () => {
   test('Should return false if field is provided', () => {
     const { sut } = makeSut()
     const input = makeInput()
@@ -36,7 +36,7 @@ describe('Required Field', () => {
   })
 
   test('Should throw if no dependencies are provided', () => {
-    const sut = new RequiredField()
+    const sut = new RequiredFieldValidation()
     expect(() => {
       sut.validate()
     }).toThrow()

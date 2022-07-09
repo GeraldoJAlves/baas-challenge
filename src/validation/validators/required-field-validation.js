@@ -1,6 +1,6 @@
 const { MissingParamError } = require('../../presentation/errors')
 
-module.exports = class RequiredField {
+module.exports = class RequiredFieldValidation {
   constructor (fieldName) {
     this.fieldName = fieldName
   }

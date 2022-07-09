@@ -1,9 +1,9 @@
 const EmailValidation = require('./email-validation')
-const RequiredField = require('./required-field')
+const RequiredFieldValidation = require('./required-field-validation')
 const ValidationComposite = require('./validation-composite')
 
 module.exports = {
   EmailValidation,
-  RequiredField,
+  RequiredFieldValidation,
   ValidationComposite
 }
