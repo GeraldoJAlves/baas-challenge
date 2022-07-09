@@ -23,6 +23,12 @@ const makeValidationSpy = () => {
 }
 
 describe('Validation Composite', () => {
+  test('Should throw if any validation throws', () => {
+    const { sut, validationSpies } = makeSut()
+    validationSpies[1].validate = () => { throw new Error() }
+    expect(() => { sut.validate({ field: 'any_data' }) }).toThrow()
+  })
+
   test('Should return an error if any validation fails', () => {
     const { sut, validationSpies } = makeSut()
     validationSpies[1].error = new Error('invalid field')
