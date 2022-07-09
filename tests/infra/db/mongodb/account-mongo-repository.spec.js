@@ -45,6 +45,21 @@ describe('Account Mongo Repository', () => {
     })
   })
 
+  describe('checkByEmail()', () => {
+    test('Should return false if no user is found', async () => {
+      const { sut } = makeSut()
+      const user = await sut.checkByEmail('unknown_email@email.com')
+      expect(user).toBeFalsy()
+    })
+
+    test('Should return true if user is found', async () => {
+      const { sut } = makeSut()
+      await mockAccount()
+      const user = await sut.checkByEmail('valid_email@email.com')
+      expect(user).toBeTruthy()
+    })
+  })
+
   describe('updateAccessToken()', () => {
     test('Should throw if no id is provided', async () => {
       const { sut } = makeSut()
