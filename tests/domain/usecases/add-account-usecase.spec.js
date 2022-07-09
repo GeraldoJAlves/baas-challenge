@@ -186,6 +186,27 @@ describe('Add Account Usecase', () => {
     expect(addAccountRepositorySpy.password).toBe(hasherSpy.encryptedHash)
   })
 
+  test('Should return false if addAccountRepository returns false', async () => {
+    const { sut, addAccountRepositorySpy } = makeSut()
+    addAccountRepositorySpy.isValid = false
+    const isValid = await sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(isValid).toBeFalsy()
+  })
+
+  test('Should return true if addAccountRepository returns true', async () => {
+    const { sut } = makeSut()
+    const isValid = await sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(isValid).toBeTruthy()
+  })
+
   test('Should throw if no addAccountRepository is provided', async () => {
     const sut = new AddAccountUseCase({
       checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
