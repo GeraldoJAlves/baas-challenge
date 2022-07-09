@@ -64,7 +64,9 @@ describe('Add Account Usecase', () => {
   })
 
   test('Should throw if no checkAccountByEmailRepository is provided', async () => {
-    const sut = new AddAccountUseCase()
+    const sut = new AddAccountUseCase({
+      hasher: makeHasherSpy()
+    })
     const promise = sut.add({
       name: 'any_name',
       email: 'any_email@email.com',
@@ -74,7 +76,10 @@ describe('Add Account Usecase', () => {
   })
 
   test('Should throw if an invalid checkAccountByEmailRepository is provided', async () => {
-    const sut = new AddAccountUseCase({})
+    const sut = new AddAccountUseCase({
+      hasher: makeHasherSpy(),
+      AddAccountUseCase: {}
+    })
     const promise = sut.add({
       name: 'any_name',
       email: 'any_email@email.com',
@@ -104,6 +109,16 @@ describe('Add Account Usecase', () => {
     expect(isValid).toBeFalsy()
   })
 
+  test('Should throw if no dependencies are provided', async () => {
+    const sut = new AddAccountUseCase()
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
+  })
+
   test('Should call hasher with correct password', async () => {
     const { sut, hasherSpy } = makeSut()
     await sut.add({
@@ -112,5 +127,30 @@ describe('Add Account Usecase', () => {
       password: 'any_password'
     })
     expect(hasherSpy.password).toBe('any_password')
+  })
+
+  test('Should throw if no hasher is provided', async () => {
+    const sut = new AddAccountUseCase({
+      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy()
+    })
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if an invalid hasher is provided', async () => {
+    const sut = new AddAccountUseCase({
+      checkAccountByEmailRepository: makeCheckAccountByEmailRepositorySpy(),
+      hasher: {}
+    })
+    const promise = sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(promise).rejects.toThrow()
   })
 })
