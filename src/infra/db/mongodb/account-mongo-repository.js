@@ -19,6 +19,20 @@ module.exports = class AccountMongoRepository {
     return MongoHelper.map(account)
   }
 
+  async checkByEmail (email) {
+    if (!email) throw new MissingParamError('email')
+    const account = await MongoHelper
+      .getCollection('accounts')
+      .findOne({
+        email
+      }, {
+        projection: {
+          _id: 1
+        }
+      })
+    return account !== null
+  }
+
   async updateAccessToken (id, token) {
     if (!id) throw new MissingParamError('id')
     if (!token) throw new MissingParamError('token')
