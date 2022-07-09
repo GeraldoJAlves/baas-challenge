@@ -29,6 +29,11 @@ describe('Validation Composite', () => {
     expect(() => { sut.validate({ field: 'any_data' }) }).toThrow()
   })
 
+  test('Should throw if no validations are provided', () => {
+    const sut = new ValidationComposite([])
+    expect(() => { sut.validate({ field: 'any_data' }) }).toThrow()
+  })
+
   test('Should return an error if any validation fails', () => {
     const { sut, validationSpies } = makeSut()
     validationSpies[1].error = new Error('invalid field')
