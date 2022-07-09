@@ -13,7 +13,7 @@ module.exports = class LoginController {
       if (error) {
         return HttpHelper.badRequest(error)
       }
-      const accessToken = this.authUseCase.auth(email, password)
+      const accessToken = await this.authUseCase.auth(email, password)
       if (!accessToken) {
         return HttpHelper.unauthorized()
       }
