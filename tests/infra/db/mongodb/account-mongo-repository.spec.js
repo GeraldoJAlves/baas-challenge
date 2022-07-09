@@ -66,6 +66,35 @@ describe('Account Mongo Repository', () => {
     })
   })
 
+  describe('add()', () => {
+    test('Should throw if no email is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.add({
+        name: 'any_name',
+        password: 'hashed_password'
+      })
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no name is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.add({
+        email: 'any_email@email.com',
+        password: 'hashed_password'
+      })
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no password is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.add({
+        email: 'any_email@email.com',
+        name: 'any_name'
+      })
+      expect(promise).rejects.toThrow()
+    })
+  })
+
   describe('updateAccessToken()', () => {
     test('Should throw if no id is provided', async () => {
       const { sut } = makeSut()
