@@ -9,7 +9,8 @@ module.exports = class SignupController {
   async handle (httpRequest) {
     try {
       const { name, email, password } = httpRequest.body
-      this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest.body)
+      if (error) return HttpHelper.badRequest(error)
       await this.addAccountUseCase.add({ name, email, password })
     } catch (error) {
       console.error(error)
