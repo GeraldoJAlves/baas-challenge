@@ -1,5 +1,6 @@
 const { SignupController } = require('../../../src/presentation/controllers')
 const { MissingParamError } = require('../../../src/presentation/errors')
+const EmailInUseError = require('../../../src/presentation/errors/email-in-use-error')
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
@@ -56,6 +57,13 @@ describe('Signup Controller', () => {
     expect(addAccountUseCaseSpy.name).toBe(httpRequest.body.name)
     expect(addAccountUseCaseSpy.email).toBe(httpRequest.body.email)
     expect(addAccountUseCaseSpy.password).toBe(httpRequest.body.password)
+  })
+
+  test('Should return 403 if addAccountUseCase returns false', async () => {
+    const { sut, addAccountUseCaseSpy } = makeSut()
+    addAccountUseCaseSpy.isValid = false
+    const httpResponse = await sut.handle(makeHttpRequest())
+    expect(httpResponse).toEqual(HttpHelper.forbidden(new EmailInUseError()))
   })
 
   test('Should return 500 if no addAccountUseCase is provided', async () => {
