@@ -165,4 +165,14 @@ describe('Signup Controller', () => {
     const httpResponse = await sut.handle(makeHttpRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
+
+  test('Should return 200 if authUseCase returns a token', async () => {
+    const { sut, authUseCaseSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.ok({
+      accessToken: authUseCaseSpy.accessToken,
+      name: httpRequest.body.name
+    }))
+  })
 })
