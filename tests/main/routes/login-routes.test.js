@@ -23,6 +23,47 @@ describe('Login Routes', () => {
     await MongoHelper.getCollection('accounts').deleteMany({})
   })
 
+  describe('POST /signup', () => {
+    test('Should return 403 on signup', async () => {
+      const hashedPassword = await bcrypt.hash('12345', env.salt)
+      await MongoHelper
+        .getCollection('accounts')
+        .insertOne({
+          email: 'valid_email@email.com',
+          name: 'any_name',
+          password: hashedPassword
+        })
+      await supertest(app)
+        .post('/api/signup')
+        .send({
+          email: 'valid_email@email.com',
+          name: 'other_name',
+          password: '12345',
+          passwordConfirmation: '12345'
+        })
+        .expect(403)
+    })
+
+    test('Should return 200 on signup', async () => {
+      await supertest(app)
+        .post('/api/signup')
+        .send({
+          email: 'valid_email@email.com',
+          name: 'other_name',
+          password: '12345',
+          passwordConfirmation: '12345'
+        })
+        .expect(200)
+    })
+
+    test('Should return 400 on signup', async () => {
+      await supertest(app)
+        .post('/api/signup')
+        .send()
+        .expect(400)
+    })
+  })
+
   describe('POST /login', () => {
     test('Should return 200 on login', async () => {
       const hashedPassword = await bcrypt.hash('12345', env.salt)
