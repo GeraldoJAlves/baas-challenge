@@ -60,7 +60,7 @@ describe('Login Routes', () => {
         .expect(401)
     })
 
-    test('Should return 401 on login ', async () => {
+    test('Should return 401 on login', async () => {
       await supertest(app)
         .post('/api/login')
         .send({
@@ -68,6 +68,13 @@ describe('Login Routes', () => {
           password: '12345'
         })
         .expect(401)
+    })
+
+    test('Should return 400 if no email and password are provided', async () => {
+      await supertest(app)
+        .post('/api/login')
+        .send()
+        .expect(400)
     })
   })
 })
