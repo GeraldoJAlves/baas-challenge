@@ -6,5 +6,6 @@ module.exports = {
     '!**/src/main/config/env.js',
     '!**/src/main/adapters/*.js'
   ],
-  preset: '@shelf/jest-mongodb'
+  preset: '@shelf/jest-mongodb',
+  watchPathIgnorePatterns: ['globalConfig']
 }
