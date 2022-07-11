@@ -28,10 +28,8 @@ const makeValidationSpy = () => {
 
 const makeUpdateAccountDetailsUseCaseSpy = () => {
   class UpdateAccountDetailsUseCase {
-    isValid = true
-    updateAccountDetails (data) {
+    async updateAccountDetails (data) {
       this.data = data
-      return this.isValid
     }
   }
   return new UpdateAccountDetailsUseCase()
@@ -127,5 +125,12 @@ describe('Account Details Controller', () => {
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should return 200 if updateAccountDetailsUseCase succeeds', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.ok(httpRequest.body))
   })
 })
