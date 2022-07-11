@@ -10,30 +10,9 @@ module.exports = class AccountDetailsController {
     try {
       const error = this.validation.validate(httpRequest.body)
       if (error) return HttpHelper.badRequest(error)
-      const {
-        fullName,
-        birthDate,
-        fatherName,
-        motherName,
-        rg,
-        cpf,
-        address,
-        city,
-        state,
-        cep
-      } = httpRequest.body
-      this.updateAccountDetailsUseCase.updateAccountDetails({
-        fullName,
-        birthDate,
-        fatherName,
-        motherName,
-        rg,
-        cpf,
-        address,
-        city,
-        state,
-        cep
-      })
+      const { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } = httpRequest.body
+      await this.updateAccountDetailsUseCase.updateAccountDetails({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
+      return HttpHelper.ok({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
     } catch (error) {
       console.error(error)
       return HttpHelper.serverError(error)
