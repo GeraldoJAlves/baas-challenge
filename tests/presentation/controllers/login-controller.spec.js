@@ -38,31 +38,20 @@ const makeValidationSpy = () => {
   return new Validation()
 }
 
-const makeHttpRequest = () => ({
-  body: {
-    email: 'valid_email@email.com',
-    password: 'valid_password'
-  }
+const makeRequest = () => ({
+  email: 'valid_email@email.com',
+  password: 'valid_password'
 })
 
-const makeHttpRequestWithInvalidCredentials = () => ({
-  body: {
-    email: 'invalid_email@email.com',
-    password: 'invalid_password'
-  }
+const makeRequestWithInvalidCredentials = () => ({
+  email: 'invalid_email@email.com',
+  password: 'invalid_password'
 })
 
 describe('Login Controller', () => {
-  test('Should return 500 if no HttpRequest is provided', async () => {
+  test('Should return 500 if no request is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle()
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
-  })
-
-  test('Should return 500 if an invalid HttpRequest is provided', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({})
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
@@ -71,8 +60,8 @@ describe('Login Controller', () => {
     const sut = new LoginController({
       validation: makeValidationSpy()
     })
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
@@ -82,8 +71,8 @@ describe('Login Controller', () => {
       authUseCase: {},
       validation: makeValidationSpy()
     })
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
@@ -92,8 +81,8 @@ describe('Login Controller', () => {
     const sut = new LoginController({
       authUseCase: makeAuthUseCaseSpy()
     })
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
@@ -103,60 +92,60 @@ describe('Login Controller', () => {
       authUseCase: makeAuthUseCaseSpy(),
       validation: {}
     })
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should return 500 if no dependencies are provided', async () => {
     const sut = new LoginController()
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should call AuthUseCase with correct params', async () => {
     const { sut, authUseCaseSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    await sut.handle(httpRequest)
-    expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
-    expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(authUseCaseSpy.email).toBe(request.email)
+    expect(authUseCaseSpy.password).toBe(request.password)
   })
 
   test('Should return 401 when invalid credentials are provided', async () => {
     const { sut, authUseCaseSpy } = makeSut()
     authUseCaseSpy.accessToken = undefined
-    const httpRequest = makeHttpRequestWithInvalidCredentials()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequestWithInvalidCredentials()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
 
   test('Should return 200 when valid credentials are provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({ accessToken: 'valid_token' })
   })
 
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const request = makeRequest()
     validationSpy.error = new InvalidParamError('param')
-    let httpResponse = await sut.handle(httpRequest)
+    let httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(400)
     validationSpy.error = new MissingParamError('param')
-    httpResponse = await sut.handle(httpRequest)
+    httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(400)
   })
 
   test('Should call Validation with correct params', async () => {
     const { sut, validationSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    await sut.handle(httpRequest)
-    expect(validationSpy.input).toEqual(httpRequest.body)
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(validationSpy.input).toEqual(request)
   })
 })

@@ -55,35 +55,33 @@ const makeValidationSpy = () => {
   return new Validation()
 }
 
-const makeHttpRequest = () => ({
-  body: {
-    name: 'valid_name',
-    email: 'valid_email@email.com',
-    password: 'valid_password',
-    passwordConfirmation: 'valid_password'
-  }
+const makeRequest = () => ({
+  name: 'valid_name',
+  email: 'valid_email@email.com',
+  password: 'valid_password',
+  passwordConfirmation: 'valid_password'
 })
 
 describe('Signup Controller', () => {
   test('Should call addAccountUseCase with correct values', async () => {
     const { sut, addAccountUseCaseSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    await sut.handle(httpRequest)
-    expect(addAccountUseCaseSpy.name).toBe(httpRequest.body.name)
-    expect(addAccountUseCaseSpy.email).toBe(httpRequest.body.email)
-    expect(addAccountUseCaseSpy.password).toBe(httpRequest.body.password)
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(addAccountUseCaseSpy.name).toBe(request.name)
+    expect(addAccountUseCaseSpy.email).toBe(request.email)
+    expect(addAccountUseCaseSpy.password).toBe(request.password)
   })
 
   test('Should return 403 if addAccountUseCase returns false', async () => {
     const { sut, addAccountUseCaseSpy } = makeSut()
     addAccountUseCaseSpy.isValid = false
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.forbidden(new EmailInUseError()))
   })
 
   test('Should return 500 if no dependencies are provided', async () => {
     const sut = new SignupController()
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
@@ -92,7 +90,7 @@ describe('Signup Controller', () => {
       validation: makeValidationSpy(),
       authUseCase: makeAuthUseCaseSpy()
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
@@ -102,22 +100,22 @@ describe('Signup Controller', () => {
       authUseCase: makeAuthUseCaseSpy(),
       addAccountUseCase: {}
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
   test('Should call validation with correct values', async () => {
     const { sut, validationSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    await sut.handle(httpRequest)
-    expect(validationSpy.input).toBe(httpRequest.body)
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(validationSpy.input).toBe(request)
   })
 
   test('Should return 400 if validation returns an error', async () => {
     const { sut, validationSpy } = makeSut()
     validationSpy.error = new MissingParamError('email')
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 
@@ -126,7 +124,7 @@ describe('Signup Controller', () => {
       addAccountUseCase: makeAddAccountUseCaseSpy(),
       authUseCase: makeAuthUseCaseSpy()
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
@@ -136,16 +134,16 @@ describe('Signup Controller', () => {
       authUseCase: makeAuthUseCaseSpy(),
       validation: {}
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
   test('Should call authUseCase with correct values', async () => {
     const { sut, authUseCaseSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    await sut.handle(httpRequest)
-    expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
-    expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(authUseCaseSpy.email).toBe(request.email)
+    expect(authUseCaseSpy.password).toBe(request.password)
   })
 
   test('Should return 500 if no authUseCase is provided', async () => {
@@ -153,7 +151,7 @@ describe('Signup Controller', () => {
       addAccountUseCase: makeAddAccountUseCaseSpy(),
       validation: makeValidationSpy()
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
@@ -162,17 +160,17 @@ describe('Signup Controller', () => {
       addAccountUseCase: makeAddAccountUseCaseSpy(),
       validation: makeValidationSpy()
     })
-    const httpResponse = await sut.handle(makeHttpRequest())
+    const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
   test('Should return 200 if authUseCase returns a token', async () => {
     const { sut, authUseCaseSpy } = makeSut()
-    const httpRequest = makeHttpRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = makeRequest()
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(HttpHelper.ok({
       accessToken: authUseCaseSpy.accessToken,
-      name: httpRequest.body.name
+      name: request.name
     }))
   })
 })

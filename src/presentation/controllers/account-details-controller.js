@@ -6,13 +6,13 @@ module.exports = class AccountDetailsController {
     this.updateAccountDetailsUseCase = updateAccountDetailsUseCase
   }
 
-  async handle (httpRequest) {
+  async handle (request) {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const { accountId, ...data } = request
+      const error = this.validation.validate(data)
       if (error) return HttpHelper.badRequest(error)
-      const { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } = httpRequest.body
-      await this.updateAccountDetailsUseCase.update({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
-      return HttpHelper.ok({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
+      await this.updateAccountDetailsUseCase.update(accountId, data)
+      return HttpHelper.ok(data)
     } catch (error) {
       console.error(error)
       return HttpHelper.serverError(error)

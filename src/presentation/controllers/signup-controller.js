@@ -8,10 +8,10 @@ module.exports = class SignupController {
     this.authUseCase = authUseCase
   }
 
-  async handle (httpRequest) {
+  async handle (request) {
     try {
-      const { name, email, password } = httpRequest.body
-      const error = this.validation.validate(httpRequest.body)
+      const { name, email, password } = request
+      const error = this.validation.validate(request)
       if (error) return HttpHelper.badRequest(error)
       const isValid = await this.addAccountUseCase.add({ name, email, password })
       if (!isValid) return HttpHelper.forbidden(new EmailInUseError())

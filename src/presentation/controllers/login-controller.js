@@ -6,10 +6,10 @@ module.exports = class LoginController {
     this.validation = validation
   }
 
-  async handle (httpRequest) {
+  async handle (request) {
     try {
-      const { email, password } = httpRequest.body
-      const error = this.validation.validate(httpRequest.body)
+      const { email, password } = request
+      const error = this.validation.validate(request)
       if (error) {
         return HttpHelper.badRequest(error)
       }
