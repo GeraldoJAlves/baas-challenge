@@ -90,4 +90,23 @@ describe('Account Details Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
+
+  test('Should return 500 if no updateAccountDetailsUseCase is provided', async () => {
+    const sut = new AccountDetailsController({
+      validation: makeValidationSpy()
+    })
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should return 500 if an invalid updateAccountDetailsUseCase is provided', async () => {
+    const sut = new AccountDetailsController({
+      validation: makeValidationSpy(),
+      updateAccountDetailsUseCase: {}
+    })
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
 })
