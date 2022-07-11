@@ -2,12 +2,15 @@ const { AccountDetailsController } = require('../../../src/presentation/controll
 
 const makeSut = () => {
   const validationSpy = makeValidationSpy()
+  const updateAccountDetailsUseCaseSpy = makeUpdateAccountDetailsUseCaseSpy()
   const sut = new AccountDetailsController({
-    validation: validationSpy
+    validation: validationSpy,
+    updateAccountDetailsUseCase: updateAccountDetailsUseCaseSpy
   })
   return {
     sut,
-    validationSpy
+    validationSpy,
+    updateAccountDetailsUseCaseSpy
   }
 }
 
@@ -19,6 +22,17 @@ const makeValidationSpy = () => {
     }
   }
   return new Validation()
+}
+
+const makeUpdateAccountDetailsUseCaseSpy = () => {
+  class UpdateAccountDetailsUseCase {
+    isValid = true
+    updateAccountDetails (data) {
+      this.data = data
+      return this.isValid
+    }
+  }
+  return new UpdateAccountDetailsUseCase()
 }
 
 const makeHttpRequest = () => ({
@@ -42,5 +56,12 @@ describe('Account Details Controller', () => {
     const httpRequest = makeHttpRequest()
     await sut.handle(httpRequest)
     expect(validationSpy.input).toEqual(httpRequest.body)
+  })
+
+  test('Should call updateAccountDetailsUseCase with correct values', async () => {
+    const { sut, updateAccountDetailsUseCaseSpy } = makeSut()
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+    expect(updateAccountDetailsUseCaseSpy.data).toEqual(httpRequest.body)
   })
 })
