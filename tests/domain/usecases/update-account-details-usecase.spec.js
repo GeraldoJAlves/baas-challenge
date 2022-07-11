@@ -13,7 +13,8 @@ const makeSut = () => {
 
 const makeUpdateAccountDetailsRepositorySpy = () => {
   class UpdateAccountDetailsRepository {
-    async updateAccountDetails (data) {
+    async updateAccountDetails (accountId, data) {
+      this.accountId = accountId
       this.data = data
     }
   }
@@ -21,6 +22,7 @@ const makeUpdateAccountDetailsRepositorySpy = () => {
 }
 
 const makeData = () => ({
+  accountId: 'any_id',
   fullName: 'any_name',
   birthDate: '2000-01-01',
   fatherName: 'any_father_name',
@@ -36,8 +38,9 @@ const makeData = () => ({
 describe('Update Account Details Usecase', () => {
   test('Should call updateAccountDetailsRepository with correct values', async () => {
     const { sut, updateAccountDetailsRepositorySpy } = makeSut()
-    const data = makeData()
-    await sut.update(data)
+    const { accountId, ...data } = makeData()
+    await sut.update(accountId, data)
+    expect(updateAccountDetailsRepositorySpy.accountId).toEqual(accountId)
     expect(updateAccountDetailsRepositorySpy.data).toEqual(data)
   })
 })

@@ -3,8 +3,8 @@ module.exports = class UpdateAccountDetailsUseCase {
     this.updateAccountDetailsRepository = updateAccountDetailsRepository
   }
 
-  async update ({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep }) {
+  async update (accountId, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep }) {
     await this.updateAccountDetailsRepository
-      .updateAccountDetails({ fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
+      .updateAccountDetails(accountId, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
   }
 }
