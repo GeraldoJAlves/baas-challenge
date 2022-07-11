@@ -68,6 +68,14 @@ describe('Account Details Controller', () => {
     expect(httpResponse).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 
+  test('Should return 500 if validation throws', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.validate = () => { throw new Error() }
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
   test('Should call updateAccountDetailsUseCase with correct values', async () => {
     const { sut, updateAccountDetailsUseCaseSpy } = makeSut()
     const httpRequest = makeHttpRequest()
