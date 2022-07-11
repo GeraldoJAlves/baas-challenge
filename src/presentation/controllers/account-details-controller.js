@@ -7,31 +7,36 @@ module.exports = class AccountDetailsController {
   }
 
   async handle (httpRequest) {
-    const error = this.validation.validate(httpRequest.body)
-    if (error) return HttpHelper.badRequest(error)
-    const {
-      fullName,
-      birthDate,
-      fatherName,
-      motherName,
-      rg,
-      cpf,
-      address,
-      city,
-      state,
-      cep
-    } = httpRequest.body
-    this.updateAccountDetailsUseCase.updateAccountDetails({
-      fullName,
-      birthDate,
-      fatherName,
-      motherName,
-      rg,
-      cpf,
-      address,
-      city,
-      state,
-      cep
-    })
+    try {
+      const error = this.validation.validate(httpRequest.body)
+      if (error) return HttpHelper.badRequest(error)
+      const {
+        fullName,
+        birthDate,
+        fatherName,
+        motherName,
+        rg,
+        cpf,
+        address,
+        city,
+        state,
+        cep
+      } = httpRequest.body
+      this.updateAccountDetailsUseCase.updateAccountDetails({
+        fullName,
+        birthDate,
+        fatherName,
+        motherName,
+        rg,
+        cpf,
+        address,
+        city,
+        state,
+        cep
+      })
+    } catch (error) {
+      console.error(error)
+      return HttpHelper.serverError(error)
+    }
   }
 }
