@@ -1,4 +1,6 @@
 const { AccountDetailsController } = require('../../../src/presentation/controllers')
+const { MissingParamError } = require('../../../src/presentation/errors')
+const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const validationSpy = makeValidationSpy()
@@ -56,6 +58,14 @@ describe('Account Details Controller', () => {
     const httpRequest = makeHttpRequest()
     await sut.handle(httpRequest)
     expect(validationSpy.input).toEqual(httpRequest.body)
+  })
+
+  test('Should return 400 if validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new MissingParamError('fullName')
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 
   test('Should call updateAccountDetailsUseCase with correct values', async () => {
