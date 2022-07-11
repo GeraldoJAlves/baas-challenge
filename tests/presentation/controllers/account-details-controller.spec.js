@@ -74,4 +74,12 @@ describe('Account Details Controller', () => {
     await sut.handle(httpRequest)
     expect(updateAccountDetailsUseCaseSpy.data).toEqual(httpRequest.body)
   })
+
+  test('Should return 500 if updateAccountDetailsUseCase throws', async () => {
+    const { sut, updateAccountDetailsUseCaseSpy } = makeSut()
+    updateAccountDetailsUseCaseSpy.updateAccountDetails = () => { throw new Error() }
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
 })
