@@ -1,3 +1,5 @@
+const { HttpHelper } = require('../helpers')
+
 module.exports = class AccountDetailsController {
   constructor ({ validation, updateAccountDetailsUseCase }) {
     this.validation = validation
@@ -5,7 +7,8 @@ module.exports = class AccountDetailsController {
   }
 
   async handle (httpRequest) {
-    this.validation.validate(httpRequest.body)
+    const error = this.validation.validate(httpRequest.body)
+    if (error) return HttpHelper.badRequest(error)
     const {
       fullName,
       birthDate,
