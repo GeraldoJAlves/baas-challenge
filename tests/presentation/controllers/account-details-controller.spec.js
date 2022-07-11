@@ -76,6 +76,25 @@ describe('Account Details Controller', () => {
     expect(httpResponse).toEqual(HttpHelper.serverError())
   })
 
+  test('Should return 500 if no validation is provided', async () => {
+    const sut = new AccountDetailsController({
+      updateAccountDetailsUseCase: makeUpdateAccountDetailsUseCaseSpy()
+    })
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should return 500 if an invalid validation is provided', async () => {
+    const sut = new AccountDetailsController({
+      validation: {},
+      updateAccountDetailsUseCase: makeUpdateAccountDetailsUseCaseSpy()
+    })
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(HttpHelper.serverError())
+  })
+
   test('Should call updateAccountDetailsUseCase with correct values', async () => {
     const { sut, updateAccountDetailsUseCaseSpy } = makeSut()
     const httpRequest = makeHttpRequest()
