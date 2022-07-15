@@ -13,7 +13,7 @@ const makeSut = () => {
 
 const makeUpdateAccountDetailsRepositorySpy = () => {
   class UpdateAccountDetailsRepository {
-    async updateAccountDetails (accountId, data) {
+    async updateDetails (accountId, data) {
       this.accountId = accountId
       this.data = data
     }
@@ -46,7 +46,7 @@ describe('Update Account Details Usecase', () => {
 
   test('Should throw if updateAccountDetailsRepository throws', async () => {
     const { sut, updateAccountDetailsRepositorySpy } = makeSut()
-    updateAccountDetailsRepositorySpy.updateAccountDetails = async () => { throw new Error() }
+    updateAccountDetailsRepositorySpy.updateDetails = async () => { throw new Error() }
     const { accountId, ...data } = makeData()
     const promise = sut.update(accountId, data)
     expect(promise).rejects.toThrow()

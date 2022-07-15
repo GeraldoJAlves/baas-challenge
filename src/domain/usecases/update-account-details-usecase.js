@@ -8,6 +8,6 @@ module.exports = class UpdateAccountDetailsUseCase {
   async update (accountId, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } = {}) {
     if (!accountId) throw new MissingParamError('accountId')
     await this.updateAccountDetailsRepository
-      .updateAccountDetails(accountId, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
+      .updateDetails(accountId, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep })
   }
 }
