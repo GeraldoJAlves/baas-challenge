@@ -43,4 +43,18 @@ describe('Update Account Details Usecase', () => {
     expect(updateAccountDetailsRepositorySpy.accountId).toEqual(accountId)
     expect(updateAccountDetailsRepositorySpy.data).toEqual(data)
   })
+
+  test('Should throw if updateAccountDetailsRepository throws', async () => {
+    const { sut, updateAccountDetailsRepositorySpy } = makeSut()
+    updateAccountDetailsRepositorySpy.updateAccountDetails = async () => { throw new Error() }
+    const { accountId, ...data } = makeData()
+    const promise = sut.update(accountId, data)
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if no data is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.update()
+    expect(promise).rejects.toThrow()
+  })
 })
