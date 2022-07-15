@@ -11,6 +11,19 @@ const mockAccount = async () => {
   return MongoHelper.map(fakeAccount)
 }
 
+const makeAccountDetails = () => ({
+  fullName: 'any_name',
+  birthDate: '2000-01-01',
+  fatherName: 'any_father_name',
+  motherName: 'any_mother_name',
+  rg: '12934',
+  cpf: '1234590',
+  address: 'street one, 111',
+  city: 'any_city',
+  state: 'any_state',
+  cep: 'any_cep'
+})
+
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
     await MongoHelper.connect(global.__MONGO_URI__)
@@ -138,6 +151,23 @@ describe('Account Mongo Repository', () => {
 
       const account = await MongoHelper.getCollection('accounts').findOne({ _id: id })
       expect(account.accessToken).toBe('valid_token')
+    })
+  })
+
+  describe('updateDetails()', () => {
+    test('Should update the acount with the details', async () => {
+      const { sut } = makeSut()
+      const { id } = await mockAccount()
+      const data = makeAccountDetails()
+      await sut.updateDetails(id, data)
+      const account = await MongoHelper.getCollection('accounts').findOne({ _id: id })
+      expect(account.details).toEqual(data)
+    })
+
+    test('Should throw if no id is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.updateDetails()
+      expect(promise).rejects.toThrow()
     })
   })
 })
