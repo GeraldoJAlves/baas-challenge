@@ -46,4 +46,9 @@ module.exports = class AccountMongoRepository {
     if (!token) throw new MissingParamError('token')
     await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { accessToken: token } })
   }
+
+  async updateDetails (id, { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } = {}) {
+    if (!id) throw new MissingParamError('id')
+    await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { details: { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } } })
+  }
 }
