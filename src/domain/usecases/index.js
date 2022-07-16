@@ -1,9 +1,11 @@
 const AuthUseCase = require('./auth-usecase')
 const AddAccountUseCase = require('./add-account-usecase')
 const UpdateAccountDetailsUseCase = require('./update-account-details-usecase')
+const LoadAccountByTokenUseCase = require('./load-account-by-token-usecase')
 
 module.exports = {
   AuthUseCase,
   AddAccountUseCase,
-  UpdateAccountDetailsUseCase
+  UpdateAccountDetailsUseCase,
+  LoadAccountByTokenUseCase
 }
