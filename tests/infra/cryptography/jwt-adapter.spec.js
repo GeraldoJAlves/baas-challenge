@@ -7,35 +7,46 @@ const makeSut = (secret = 'any_secret') => {
 }
 
 describe('Jwt Adapter', () => {
-  test('Should call jsonwebtoken with correct value', async () => {
-    const { sut } = makeSut('valid_secret')
-    await sut.encrypt('any_id')
-    expect(jwt.data.id).toBe('any_id')
-    expect(jwt.secret).toBe('valid_secret')
+  describe('encrypt()', () => {
+    test('Should call jsonwebtoken with correct value', async () => {
+      const { sut } = makeSut('valid_secret')
+      await sut.encrypt('any_id')
+      expect(jwt.data.id).toBe('any_id')
+      expect(jwt.secret).toBe('valid_secret')
+    })
+
+    test('Should return token when jsonwebtoken returns a token', async () => {
+      const { sut } = makeSut('valid_secret')
+      const token = await sut.encrypt('any_id')
+      expect(token).toBe(jwt.signToken)
+    })
+
+    test('Should throw if no secret is provided', async () => {
+      const { sut } = makeSut('')
+      const promise = sut.encrypt('any_id')
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no id is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.encrypt('')
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if jsonwebtoken throws', async () => {
+      const { sut } = makeSut()
+      jwt.sign = async () => { throw new Error() }
+      const promise = sut.encrypt('any_id')
+      expect(promise).rejects.toThrow()
+    })
   })
 
-  test('Should return token when jsonwebtoken returns a token', async () => {
-    const { sut } = makeSut('valid_secret')
-    const token = await sut.encrypt('any_id')
-    expect(token).toBe(jwt.token)
-  })
-
-  test('Should throw if no secret is provided', async () => {
-    const { sut } = makeSut('')
-    const promise = sut.encrypt('any_id')
-    expect(promise).rejects.toThrow()
-  })
-
-  test('Should throw if no id is provided', async () => {
-    const { sut } = makeSut()
-    const promise = sut.encrypt('')
-    expect(promise).rejects.toThrow()
-  })
-
-  test('Should throw if jsonwebtoken throws', async () => {
-    const { sut } = makeSut()
-    jwt.sign = async () => { throw new Error() }
-    const promise = sut.encrypt('any_id')
-    expect(promise).rejects.toThrow()
+  describe('decrypt()', () => {
+    test('Should call jsonwebtoken with correct token', async () => {
+      const { sut } = makeSut('valid_secret')
+      await sut.decrypt('any_token')
+      expect(jwt.token).toBe('any_token')
+      expect(jwt.secret).toBe('valid_secret')
+    })
   })
 })
