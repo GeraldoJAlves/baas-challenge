@@ -48,5 +48,11 @@ describe('Jwt Adapter', () => {
       expect(jwt.token).toBe('any_token')
       expect(jwt.secret).toBe('valid_secret')
     })
+
+    test('Should throw if no token is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.decrypt()
+      expect(promise).rejects.toThrow()
+    })
   })
 })
