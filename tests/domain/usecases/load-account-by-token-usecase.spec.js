@@ -57,20 +57,27 @@ describe('Load Account By Token Usecase', () => {
 
   test('Should return an account if loadAccountByTokenRepository returns an account', async () => {
     const { sut, loadAccountByTokenRepositorySpy } = makeSut()
-    const response = await sut.load('any_token', 'any_role')
-    expect(response).toEqual(loadAccountByTokenRepositorySpy.account)
+    const account = await sut.load('any_token', 'any_role')
+    expect(account).toEqual(loadAccountByTokenRepositorySpy.account)
   })
 
   test('Should return null if loadAccountByTokenRepository returns null', async () => {
     const { sut, loadAccountByTokenRepositorySpy } = makeSut()
     loadAccountByTokenRepositorySpy.account = null
-    const response = await sut.load('any_token', 'any_role')
-    expect(response).toBeNull()
+    const account = await sut.load('any_token', 'any_role')
+    expect(account).toBeNull()
   })
 
   test('Should call decrypter with correct token', async () => {
     const { sut, decrypterSpy } = makeSut()
     await sut.load('any_token', 'any_role')
     expect(decrypterSpy.accessToken).toBe('any_token')
+  })
+
+  test('Should return null if decrypter returns null', async () => {
+    const { sut, decrypterSpy } = makeSut()
+    decrypterSpy.data = null
+    const account = await sut.load('any_token', 'any_role')
+    expect(account).toBeNull()
   })
 })
