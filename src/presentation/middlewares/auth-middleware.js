@@ -8,7 +8,11 @@ module.exports = class AuthMiddleware {
   }
 
   async handle ({ accessToken } = {}) {
-    if (!accessToken) return HttpHelper.forbidden(new AccessDeniedError())
-    await this.loadAccountByToken.load(accessToken, this.role)
+    try {
+      if (!accessToken) return HttpHelper.forbidden(new AccessDeniedError())
+      await this.loadAccountByToken.load(accessToken, this.role)
+    } catch (error) {
+      return HttpHelper.serverError(error)
+    }
   }
 }
