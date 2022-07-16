@@ -2,13 +2,27 @@ const { LoadAccountByTokenUseCase } = require('../../../src/domain/usecases')
 
 const makeSut = () => {
   const loadAccountByTokenRepositorySpy = makeLoadAccountByTokenRepositorySpy()
+  const decrypterSpy = makeDecrypterSpy()
   const sut = new LoadAccountByTokenUseCase({
-    loadAccountByTokenRepository: loadAccountByTokenRepositorySpy
+    loadAccountByTokenRepository: loadAccountByTokenRepositorySpy,
+    decrypter: decrypterSpy
   })
   return {
     sut,
-    loadAccountByTokenRepositorySpy
+    loadAccountByTokenRepositorySpy,
+    decrypterSpy
   }
+}
+
+const makeDecrypterSpy = () => {
+  class Decrypter {
+    data = {}
+    async decrypt (accessToken) {
+      this.accessToken = accessToken
+      return this.data
+    }
+  }
+  return new Decrypter()
 }
 
 const makeLoadAccountByTokenRepositorySpy = () => {
@@ -52,5 +66,11 @@ describe('Load Account By Token Usecase', () => {
     loadAccountByTokenRepositorySpy.account = null
     const response = await sut.load('any_token', 'any_role')
     expect(response).toBeNull()
+  })
+
+  test('Should call decrypter with correct token', async () => {
+    const { sut, decrypterSpy } = makeSut()
+    await sut.load('any_token', 'any_role')
+    expect(decrypterSpy.accessToken).toBe('any_token')
   })
 })
