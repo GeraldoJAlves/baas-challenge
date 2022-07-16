@@ -187,5 +187,13 @@ describe('Account Mongo Repository', () => {
       account = await sut.loadByToken('any_token', 'userAccount')
       expect(account).toEqual({ id })
     })
+
+    test('Should return null if account role has more privileges', async () => {
+      const { sut } = makeSut()
+      let account = await sut.loadByToken('any_token', 'user')
+      expect(account).toBeNull()
+      account = await sut.loadByToken('any_token', 'userAccount')
+      expect(account).toBeNull()
+    })
   })
 })
