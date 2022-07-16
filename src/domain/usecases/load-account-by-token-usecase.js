@@ -14,7 +14,6 @@ module.exports = class LoadAccountByTokenUseCase {
     } catch (error) {
       return null
     }
-    const account = await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
-    return account
+    return await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
   }
 }
