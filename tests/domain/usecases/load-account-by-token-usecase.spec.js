@@ -46,4 +46,11 @@ describe('Load Account By Token Usecase', () => {
     const response = await sut.load('any_token', 'any_role')
     expect(response).toEqual(loadAccountByTokenRepositorySpy.account)
   })
+
+  test('Should return null if loadAccountByTokenRepository returns null', async () => {
+    const { sut, loadAccountByTokenRepositorySpy } = makeSut()
+    loadAccountByTokenRepositorySpy.account = null
+    const response = await sut.load('any_token', 'any_role')
+    expect(response).toBeNull()
+  })
 })
