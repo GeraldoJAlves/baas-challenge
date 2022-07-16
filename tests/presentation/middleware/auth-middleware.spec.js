@@ -64,4 +64,12 @@ describe('Auth Middleware', () => {
     const response = await sut.handle(request)
     expect(response).toEqual(HttpHelper.ok({ accountId }))
   })
+
+  test('Should return 403 if loadAccountByToken returns null', async () => {
+    const { sut, loadAccountByTokenSpy } = makeSut()
+    loadAccountByTokenSpy.account = null
+    const request = makeRequest()
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.forbidden(new AccessDeniedError()))
+  })
 })
