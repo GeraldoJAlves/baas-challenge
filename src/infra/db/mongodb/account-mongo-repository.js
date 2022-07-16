@@ -42,7 +42,14 @@ module.exports = class AccountMongoRepository {
   }
 
   async loadByToken (accessToken, role = 'user') {
-    const account = await MongoHelper.getCollection('accounts').findOne({ accessToken, role }, { projection: { _id: 1 } })
+    const roles = {
+      admin: ['admin', 'userAccount', 'user'],
+      userAccount: ['userAccount', 'user'],
+      user: ['user']
+    }
+    const filter = roles[role].map((role) => ({ role }))
+
+    const account = await MongoHelper.getCollection('accounts').findOne({ accessToken, $or: filter }, { projection: { _id: 1 } })
     return account && MongoHelper.map(account)
   }
 
