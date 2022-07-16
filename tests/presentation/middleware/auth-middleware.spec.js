@@ -16,6 +16,10 @@ const makeSut = (role = 'user') => {
 
 const makeLoadAccountByTokenSpy = () => {
   class LoadAccountByToken {
+    account = {
+      id: 'any_id'
+    }
+
     async load (accessToken, role) {
       this.accessToken = accessToken
       this.role = role
@@ -51,5 +55,13 @@ describe('Auth Middleware', () => {
     const request = makeRequest()
     const response = await sut.handle(request)
     expect(response).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should return 200 if loadAccountByToken returns a token', async () => {
+    const { sut, loadAccountByTokenSpy } = makeSut()
+    const accountId = loadAccountByTokenSpy.account.id
+    const request = makeRequest()
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.ok({ accountId }))
   })
 })
