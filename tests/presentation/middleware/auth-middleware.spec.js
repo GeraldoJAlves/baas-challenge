@@ -44,4 +44,12 @@ describe('Auth Middleware', () => {
     const response = await sut.handle({})
     expect(response).toEqual(HttpHelper.forbidden(new AccessDeniedError()))
   })
+
+  test('Should return 500 if loadAccountByToken throws', async () => {
+    const { sut, loadAccountByTokenSpy } = makeSut()
+    loadAccountByTokenSpy.load = () => { throw new Error() }
+    const request = makeRequest()
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.serverError())
+  })
 })
