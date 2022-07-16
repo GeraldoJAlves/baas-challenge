@@ -7,6 +7,8 @@ module.exports = class JwtAdapter {
   }
 
   async decrypt (token) {
+    if (!this.secret) throw new MissingParamError('secret')
+    if (!token) throw new MissingParamError('token')
     return await jwt.verify(token, this.secret)
   }
 
