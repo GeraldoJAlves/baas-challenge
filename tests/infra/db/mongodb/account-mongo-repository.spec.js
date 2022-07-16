@@ -195,5 +195,17 @@ describe('Account Mongo Repository', () => {
       account = await sut.loadByToken('any_token', 'userAccount')
       expect(account).toBeNull()
     })
+
+    test('Should throw if no token is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.loadByToken()
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if an invalid role is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.loadByToken('any_token', 'invalid_role')
+      expect(promise).rejects.toThrow()
+    })
   })
 })
