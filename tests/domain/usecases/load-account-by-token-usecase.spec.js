@@ -33,4 +33,11 @@ describe('Load Account By Token Usecase', () => {
     expect(loadAccountByTokenRepositorySpy.accessToken).toBe('any_token')
     expect(loadAccountByTokenRepositorySpy.role).toBe('any_role')
   })
+
+  test('Shoul throw if loadAccountByTokenRepository throws', async () => {
+    const { sut, loadAccountByTokenRepositorySpy } = makeSut()
+    loadAccountByTokenRepositorySpy.loadByToken = async () => { throw new Error() }
+    const promise = sut.load('any_token', 'any_role')
+    expect(promise).rejects.toThrow()
+  })
 })
