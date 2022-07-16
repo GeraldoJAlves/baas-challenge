@@ -6,6 +6,7 @@ module.exports = class LoadAccountByTokenUseCase {
   }
 
   async load (accessToken, role) {
-    await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
+    const account = await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
+    return account
   }
 }
