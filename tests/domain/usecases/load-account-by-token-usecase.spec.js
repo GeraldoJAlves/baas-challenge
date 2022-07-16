@@ -80,4 +80,11 @@ describe('Load Account By Token Usecase', () => {
     const account = await sut.load('any_token', 'any_role')
     expect(account).toBeNull()
   })
+
+  test('Should return null if decrypter throws', async () => {
+    const { sut, decrypterSpy } = makeSut()
+    decrypterSpy.decrypt = async () => { throw new Error() }
+    const account = await sut.load('any_token', 'any_role')
+    expect(account).toBeNull()
+  })
 })
