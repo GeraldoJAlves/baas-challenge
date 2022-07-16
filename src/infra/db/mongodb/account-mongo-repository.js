@@ -1,5 +1,5 @@
 const MongoHelper = require('./mongo-helper')
-const { MissingParamError } = require('../../../presentation/errors')
+const { MissingParamError, InvalidParamError } = require('../../../presentation/errors')
 
 module.exports = class AccountMongoRepository {
   async loadByEmail (email) {
@@ -47,8 +47,9 @@ module.exports = class AccountMongoRepository {
       userAccount: ['userAccount', 'user'],
       user: ['user']
     }
+    if (!accessToken) throw new MissingParamError('accessToken')
+    if (!roles[role]) throw new InvalidParamError('role')
     const filter = roles[role].map((role) => ({ role }))
-
     const account = await MongoHelper.getCollection('accounts').findOne({ accessToken, $or: filter }, { projection: { _id: 1 } })
     return account && MongoHelper.map(account)
   }
