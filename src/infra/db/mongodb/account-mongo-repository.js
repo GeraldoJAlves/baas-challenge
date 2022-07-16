@@ -41,6 +41,11 @@ module.exports = class AccountMongoRepository {
     return result.insertedId !== null
   }
 
+  async loadByToken (accessToken, role = 'user') {
+    const account = await MongoHelper.getCollection('accounts').findOne({ accessToken, role }, { projection: { _id: 1 } })
+    return account && MongoHelper.map(account)
+  }
+
   async updateAccessToken (id, token) {
     if (!id) throw new MissingParamError('id')
     if (!token) throw new MissingParamError('token')
