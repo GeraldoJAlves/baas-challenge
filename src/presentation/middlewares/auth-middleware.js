@@ -10,7 +10,9 @@ module.exports = class AuthMiddleware {
   async handle ({ accessToken } = {}) {
     try {
       if (!accessToken) return HttpHelper.forbidden(new AccessDeniedError())
-      await this.loadAccountByToken.load(accessToken, this.role)
+      const account = await this.loadAccountByToken.load(accessToken, this.role)
+      if (!account) return HttpHelper.forbidden(new AccessDeniedError())
+      return HttpHelper.ok({ accountId: account.id })
     } catch (error) {
       return HttpHelper.serverError(error)
     }
