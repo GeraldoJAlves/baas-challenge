@@ -5,8 +5,8 @@ const makeSut = () => {
   return { sut }
 }
 
-const mockAccount = async () => {
-  const fakeAccount = { email: 'valid_email@email.com', name: 'any_name', password: 'hashed_password' }
+const mockAccount = async (role = 'user') => {
+  const fakeAccount = { accessToken: 'any_token', role, email: 'valid_email@email.com', name: 'any_name', password: 'hashed_password' }
   await MongoHelper.getCollection('accounts').insertOne(fakeAccount)
   return MongoHelper.map(fakeAccount)
 }
@@ -168,6 +168,15 @@ describe('Account Mongo Repository', () => {
       const { sut } = makeSut()
       const promise = sut.updateDetails()
       expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('loadByToken()', () => {
+    test('Should return an account if token belongs to role', async () => {
+      const { sut } = makeSut()
+      const { id } = await mockAccount()
+      const account = await sut.loadByToken('any_token', 'user')
+      expect(account).toEqual({ id })
     })
   })
 })
