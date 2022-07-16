@@ -8,8 +8,12 @@ module.exports = class LoadAccountByTokenUseCase {
   }
 
   async load (accessToken, role) {
-    const data = await this.decrypter.decrypt(accessToken)
-    if (!data) return null
+    try {
+      const data = await this.decrypter.decrypt(accessToken)
+      if (!data) return null
+    } catch (error) {
+      return null
+    }
     const account = await this.loadAccountByTokenRepository.loadByToken(accessToken, role)
     return account
   }
