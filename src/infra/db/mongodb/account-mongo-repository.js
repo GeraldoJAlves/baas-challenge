@@ -64,4 +64,18 @@ module.exports = class AccountMongoRepository {
     if (!id) throw new MissingParamError('id')
     await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { details: { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } } })
   }
+
+  async loadDetails (id) {
+    const { email, details } = await MongoHelper.getCollection('accounts').findOne({
+      _id: id
+    }, {
+      projection: {
+        _id: 0,
+        email: 1,
+        details: 1
+      }
+    })
+    const account = { email, ...details }
+    return account
+  }
 }
