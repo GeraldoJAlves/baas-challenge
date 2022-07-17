@@ -66,7 +66,7 @@ module.exports = class AccountMongoRepository {
   }
 
   async loadDetails (id) {
-    const { email, details } = await MongoHelper.getCollection('accounts').findOne({
+    const account = await MongoHelper.getCollection('accounts').findOne({
       _id: id
     }, {
       projection: {
@@ -75,7 +75,7 @@ module.exports = class AccountMongoRepository {
         details: 1
       }
     })
-    const account = { email, ...details }
-    return account
+    if (!account) return null
+    return { email: account.email, ...account.details }
   }
 }
