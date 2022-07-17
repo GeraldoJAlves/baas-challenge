@@ -1,4 +1,5 @@
 const { SaveAccountDocumentController } = require('../../../src/presentation/controllers')
+const { MissingParamError } = require('../../../src/presentation/errors')
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
@@ -70,5 +71,13 @@ describe('Class Test', () => {
     const request = makeRequest()
     await sut.handle(request)
     expect(validationSpy.input).toEqual(request)
+  })
+
+  test('Should return 400 if validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new MissingParamError('document')
+    const request = makeRequest()
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 })
