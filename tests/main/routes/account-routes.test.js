@@ -10,14 +10,15 @@ const supertest = require('supertest')
 const jwt = require('jsonwebtoken')
 const { jwtSecret } = require('../../../src/main/config/env')
 
-const mockAccount = async () => {
+const mockAccount = async (role = 'user') => {
   const hashedPassword = await bcrypt.hash('12345', env.salt)
+  const email = 'valid_email@email.com'
   const { insertedId } = await MongoHelper
     .getCollection('accounts')
     .insertOne({
-      email: 'valid_email@email.com',
+      email,
       name: 'any_name',
-      role: 'user',
+      role,
       password: hashedPassword
     })
   const accessToken = await jwt.sign({ id: insertedId }, jwtSecret)
@@ -25,9 +26,38 @@ const mockAccount = async () => {
     .getCollection('accounts')
     .updateOne({ _id: insertedId }, { $set: { accessToken } })
   return {
-    accessToken
+    id: insertedId,
+    accessToken,
+    email
   }
 }
+
+const mockAccountDetails = async () => {
+  const { id, accessToken, email } = await mockAccount()
+  const accountDetails = makeAccountDetails()
+  await MongoHelper
+    .getCollection('accounts')
+    .updateOne({ _id: id }, { $set: { details: accountDetails } })
+  return {
+    id,
+    accessToken,
+    email,
+    ...accountDetails
+  }
+}
+
+const makeAccountDetails = () => ({
+  fullName: 'any_name',
+  birthDate: '2000-01-01',
+  fatherName: 'any_father_name',
+  motherName: 'any_mother_name',
+  rg: '12934',
+  cpf: '1234590',
+  address: 'street one, 111',
+  city: 'any_city',
+  state: 'any_state',
+  cep: 'any_cep'
+})
 
 describe('Account Routes', () => {
   let app
@@ -95,6 +125,33 @@ describe('Account Routes', () => {
           birthDate: '2000-01-01'
         })
         .expect(400)
+    })
+  })
+
+  describe('GET /account-details', () => {
+    test('Should return 200 on load account', async () => {
+      const { id, accessToken, ...details } = await mockAccountDetails()
+      await supertest(app)
+        .get('/api/account-details')
+        .set('x-access-token', accessToken)
+        .expect(200)
+        .expect(details)
+    })
+
+    test('Should return 404 on load account', async () => {
+      const { accessToken } = await mockAccount()
+      await supertest(app)
+        .get('/api/account-details')
+        .set('x-access-token', accessToken)
+        .expect(404)
+        .expect('')
+    })
+
+    test('Should return 403 on load account', async () => {
+      await mockAccount()
+      await supertest(app)
+        .get('/api/account-details')
+        .expect(403)
     })
   })
 })
