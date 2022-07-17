@@ -1,3 +1,5 @@
+const { HttpHelper } = require('../helpers')
+
 module.exports = class LoadAccountDetailsController {
   constructor ({
     loadAccountDetailsUseCase
@@ -5,7 +7,12 @@ module.exports = class LoadAccountDetailsController {
     this.loadAccountDetailsUseCase = loadAccountDetailsUseCase
   }
 
-  async handle ({ accountId } = {}) {
-    await this.loadAccountDetailsUseCase.load(accountId)
+  async handle (request) {
+    try {
+      const { accountId } = request
+      await this.loadAccountDetailsUseCase.load(accountId)
+    } catch (error) {
+      return HttpHelper.serverError(error)
+    }
   }
 }
