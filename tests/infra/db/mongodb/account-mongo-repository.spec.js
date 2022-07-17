@@ -234,5 +234,12 @@ describe('Account Mongo Repository', () => {
       const account = await sut.loadDetails('any_id')
       expect(account).toBeNull()
     })
+
+    test('Should throw if no id is provided', async () => {
+      const { sut } = makeSut()
+      await mockAccountDetails()
+      const promise = sut.loadDetails('any_id')
+      expect(promise).rejects.toThrow()
+    })
   })
 })
