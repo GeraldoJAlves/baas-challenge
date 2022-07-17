@@ -235,6 +235,13 @@ describe('Account Mongo Repository', () => {
       expect(account).toBeNull()
     })
 
+    test('Should return null if account does not have details', async () => {
+      const { sut } = makeSut()
+      const { id } = await mockAccount()
+      const account = await sut.loadDetails(id)
+      expect(account).toBeNull()
+    })
+
     test('Should throw if no id is provided', async () => {
       const { sut } = makeSut()
       await mockAccountDetails()
