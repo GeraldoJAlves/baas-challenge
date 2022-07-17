@@ -37,6 +37,13 @@ describe('Class Test', () => {
     expect(uploadAccountDocumentUseCaseSpy.document).toEqual(request.document)
   })
 
+  test('Should return 204 if uploadAccountDocumentUseCase succeeds', async () => {
+    const { sut } = makeSut()
+    const request = makeRequest()
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.noContent())
+  })
+
   test('Should return 500 if uploadAccountDocumentUseCase throws', async () => {
     const { sut, uploadAccountDocumentUseCaseSpy } = makeSut()
     uploadAccountDocumentUseCaseSpy.upload = async () => { throw new Error() }
