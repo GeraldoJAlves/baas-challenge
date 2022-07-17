@@ -75,7 +75,7 @@ module.exports = class AccountMongoRepository {
         details: 1
       }
     })
-    if (!account) return null
+    if (!account || !account.details) return null
     return { email: account.email, ...account.details }
   }
 }
