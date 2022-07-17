@@ -1,4 +1,5 @@
 const { LoadAccountDetailsController } = require('../../../src/presentation/controllers')
+const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const loadAccountDetailsUseCaseSpy = makeLoadAccountDetailsUseCaseSpy()
@@ -35,5 +36,14 @@ describe('Load Account Details Controller', () => {
       accountId: 'any_id'
     })
     expect(loadAccountDetailsUseCaseSpy.accountId).toBe('any_id')
+  })
+
+  test('Should return 500 if loadAccountDetailsUseCase throws', async () => {
+    const { sut, loadAccountDetailsUseCaseSpy } = makeSut()
+    loadAccountDetailsUseCaseSpy.load = async () => { throw new Error() }
+    const response = await sut.handle({
+      accountId: 'any_id'
+    })
+    expect(response).toEqual(HttpHelper.serverError())
   })
 })
