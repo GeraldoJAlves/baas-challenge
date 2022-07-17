@@ -46,4 +46,12 @@ describe('Load Account Details Controller', () => {
     })
     expect(response).toEqual(HttpHelper.serverError())
   })
+
+  test('Should return 200 if loadAccountDetailsUseCase returns an account', async () => {
+    const { sut, loadAccountDetailsUseCaseSpy } = makeSut()
+    const response = await sut.handle({
+      accountId: 'any_id'
+    })
+    expect(response).toEqual(HttpHelper.ok(loadAccountDetailsUseCaseSpy.account))
+  })
 })
