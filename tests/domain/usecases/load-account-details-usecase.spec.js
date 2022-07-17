@@ -44,7 +44,13 @@ describe('Load Account Details Usecase', () => {
     expect(promise).rejects.toThrow()
   })
 
-  test('Should return an account if loadAccountDetailsRepository return an account', async () => {
+  test('Should return an account if loadAccountDetailsRepository returns an account', async () => {
+    const { sut, loadAccountDetailsRepositorySpy } = makeSut()
+    const account = await sut.load('any_id')
+    expect(account).toEqual(loadAccountDetailsRepositorySpy.account)
+  })
+
+  test('Should return null if loadAccountDetailsRepository returns null', async () => {
     const { sut, loadAccountDetailsRepositorySpy } = makeSut()
     const account = await sut.load('any_id')
     expect(account).toEqual(loadAccountDetailsRepositorySpy.account)
