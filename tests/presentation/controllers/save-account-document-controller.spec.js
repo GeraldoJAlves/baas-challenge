@@ -43,7 +43,7 @@ const makeRequest = () => ({
   }
 })
 
-describe('Class Test', () => {
+describe('Upload Account Document UseCase', () => {
   test('Should call uploadAccountDocumentUseCase with correct document', async () => {
     const { sut, uploadAccountDocumentUseCaseSpy } = makeSut()
     const request = makeRequest()
