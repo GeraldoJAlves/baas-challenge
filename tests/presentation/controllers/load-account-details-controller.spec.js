@@ -54,4 +54,13 @@ describe('Load Account Details Controller', () => {
     })
     expect(response).toEqual(HttpHelper.ok(loadAccountDetailsUseCaseSpy.account))
   })
+
+  test('Should return 404 if loadAccountDetailsUseCase returns null', async () => {
+    const { sut, loadAccountDetailsUseCaseSpy } = makeSut()
+    loadAccountDetailsUseCaseSpy.account = null
+    const response = await sut.handle({
+      accountId: 'any_id'
+    })
+    expect(response).toEqual(HttpHelper.notFound())
+  })
 })
