@@ -36,6 +36,12 @@ module.exports = class HttpHelper {
     }
   }
 
+  static noContent (body) {
+    return {
+      statusCode: 204
+    }
+  }
+
   static notFound () {
     return {
       statusCode: 404

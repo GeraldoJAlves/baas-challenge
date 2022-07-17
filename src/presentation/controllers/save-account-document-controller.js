@@ -9,6 +9,7 @@ module.exports = class SaveAccountDocumentController {
     try {
       const { document } = request
       await this.uploadAccountDocumentUseCase.upload(document)
+      return HttpHelper.noContent()
     } catch (error) {
       return HttpHelper.serverError(error)
     }
