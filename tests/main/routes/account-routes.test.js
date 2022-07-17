@@ -138,7 +138,7 @@ describe('Account Routes', () => {
         .expect(details)
     })
 
-    test('Should return 404 on load account', async () => {
+    test('Should return 404 if account does not exist ', async () => {
       const { accessToken } = await mockAccount()
       await supertest(app)
         .get('/api/account-details')
@@ -147,7 +147,7 @@ describe('Account Routes', () => {
         .expect('')
     })
 
-    test('Should return 403 on load account', async () => {
+    test('Should return 403 if no accessToken is provided', async () => {
       await mockAccount()
       await supertest(app)
         .get('/api/account-details')
