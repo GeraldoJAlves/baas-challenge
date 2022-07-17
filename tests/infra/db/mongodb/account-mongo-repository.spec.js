@@ -11,6 +11,17 @@ const mockAccount = async (role = 'user') => {
   return MongoHelper.map(fakeAccount)
 }
 
+const mockAccountDetails = async () => {
+  const { id, email } = await mockAccount()
+  const accountDetails = makeAccountDetails()
+  await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { details: accountDetails } })
+  return {
+    id,
+    email,
+    ...accountDetails
+  }
+}
+
 const makeAccountDetails = () => ({
   fullName: 'any_name',
   birthDate: '2000-01-01',
@@ -206,6 +217,15 @@ describe('Account Mongo Repository', () => {
       const { sut } = makeSut()
       const promise = sut.loadByToken('any_token', 'invalid_role')
       expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('loadDetails()', () => {
+    test('Should return an account if account is found', async () => {
+      const { sut } = makeSut()
+      const { id, ...accountDetails } = await mockAccountDetails()
+      const account = await sut.loadDetails(id)
+      expect(account).toEqual(accountDetails)
     })
   })
 })
