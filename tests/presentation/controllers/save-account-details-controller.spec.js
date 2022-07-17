@@ -1,11 +1,11 @@
-const { AccountDetailsController } = require('../../../src/presentation/controllers')
+const { SaveAccountDetailsController } = require('../../../src/presentation/controllers')
 const { MissingParamError } = require('../../../src/presentation/errors')
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const validationSpy = makeValidationSpy()
   const updateAccountDetailsUseCaseSpy = makeUpdateAccountDetailsUseCaseSpy()
-  const sut = new AccountDetailsController({
+  const sut = new SaveAccountDetailsController({
     validation: validationSpy,
     updateAccountDetailsUseCase: updateAccountDetailsUseCaseSpy
   })
@@ -50,7 +50,7 @@ const makeRequest = () => ({
   cep: 'any_cep'
 })
 
-describe('Account Details Controller', () => {
+describe('Save Account Details Controller', () => {
   test('Should call validation with correct input', async () => {
     const { sut, validationSpy } = makeSut()
     const request = makeRequest()
@@ -76,7 +76,7 @@ describe('Account Details Controller', () => {
   })
 
   test('Should return 500 if no validation is provided', async () => {
-    const sut = new AccountDetailsController({
+    const sut = new SaveAccountDetailsController({
       updateAccountDetailsUseCase: makeUpdateAccountDetailsUseCaseSpy()
     })
     const request = makeRequest()
@@ -85,7 +85,7 @@ describe('Account Details Controller', () => {
   })
 
   test('Should return 500 if an invalid validation is provided', async () => {
-    const sut = new AccountDetailsController({
+    const sut = new SaveAccountDetailsController({
       validation: {},
       updateAccountDetailsUseCase: makeUpdateAccountDetailsUseCaseSpy()
     })
@@ -112,7 +112,7 @@ describe('Account Details Controller', () => {
   })
 
   test('Should return 500 if no updateAccountDetailsUseCase is provided', async () => {
-    const sut = new AccountDetailsController({
+    const sut = new SaveAccountDetailsController({
       validation: makeValidationSpy()
     })
     const request = makeRequest()
@@ -121,7 +121,7 @@ describe('Account Details Controller', () => {
   })
 
   test('Should return 500 if an invalid updateAccountDetailsUseCase is provided', async () => {
-    const sut = new AccountDetailsController({
+    const sut = new SaveAccountDetailsController({
       validation: makeValidationSpy(),
       updateAccountDetailsUseCase: {}
     })

@@ -1,6 +1,6 @@
 const { HttpHelper } = require('../helpers')
 
-module.exports = class AccountDetailsController {
+module.exports = class SaveAccountDetailsController {
   constructor ({ validation, updateAccountDetailsUseCase }) {
     this.validation = validation
     this.updateAccountDetailsUseCase = updateAccountDetailsUseCase
