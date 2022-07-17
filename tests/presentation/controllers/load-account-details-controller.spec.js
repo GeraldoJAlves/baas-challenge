@@ -3,11 +3,14 @@ const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const loadAccountDetailsUseCaseSpy = makeLoadAccountDetailsUseCaseSpy()
+  const validationSpy = makeValidationSpy()
   const sut = new LoadAccountDetailsController({
-    loadAccountDetailsUseCase: loadAccountDetailsUseCaseSpy
+    loadAccountDetailsUseCase: loadAccountDetailsUseCaseSpy,
+    validation: validationSpy
   })
   return {
     sut,
+    validationSpy,
     loadAccountDetailsUseCaseSpy
   }
 }
@@ -27,6 +30,17 @@ const makeLoadAccountDetailsUseCaseSpy = () => {
     }
   }
   return new LoadAccountDetailsUseCase()
+}
+
+const makeValidationSpy = () => {
+  class Validation {
+    error = null
+    validate (input) {
+      this.input = input
+      return this.error
+    }
+  }
+  return new Validation()
 }
 
 describe('Load Account Details Controller', () => {
@@ -62,5 +76,14 @@ describe('Load Account Details Controller', () => {
       accountId: 'any_id'
     })
     expect(response).toEqual(HttpHelper.notFound())
+  })
+
+  test('Should call validation with correct values', async () => {
+    const { sut, validationSpy } = makeSut()
+    const request = {
+      accountId: 'any_id'
+    }
+    await sut.handle(request)
+    expect(validationSpy.input).toBe(request)
   })
 })
