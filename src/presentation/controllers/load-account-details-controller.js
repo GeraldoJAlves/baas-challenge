@@ -10,7 +10,8 @@ module.exports = class LoadAccountDetailsController {
   async handle (request) {
     try {
       const { accountId } = request
-      await this.loadAccountDetailsUseCase.load(accountId)
+      const account = await this.loadAccountDetailsUseCase.load(accountId)
+      return HttpHelper.ok(account)
     } catch (error) {
       return HttpHelper.serverError(error)
     }
