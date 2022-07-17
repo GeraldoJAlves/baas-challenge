@@ -49,4 +49,10 @@ describe('Load Account Details Usecase', () => {
     const account = await sut.load('any_id')
     expect(account).toEqual(loadAccountDetailsRepositorySpy.account)
   })
+
+  test('Should throw if no accountId is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.load()
+    expect(promise).rejects.toThrow()
+  })
 })
