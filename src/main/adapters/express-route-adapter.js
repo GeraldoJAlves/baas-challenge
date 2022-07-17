@@ -7,7 +7,8 @@ module.exports = (controller) => {
     }
     const { statusCode, body } = await controller.handle(request)
     if (statusCode < 200 || statusCode > 299) {
-      return res.status(statusCode).json({ error: body.message })
+      const response = body?.message ? { error: body?.message } : undefined
+      return res.status(statusCode).json(response)
     }
     res.status(statusCode).json(body)
   }
