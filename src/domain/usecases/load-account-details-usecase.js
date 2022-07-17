@@ -4,6 +4,6 @@ module.exports = class LoadAccountDetailsUseCase {
   }
 
   async load (accountId) {
-    await this.loadAccountDetailsRepository.loadDetails(accountId)
+    return await this.loadAccountDetailsRepository.loadDetails(accountId)
   }
 }
