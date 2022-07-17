@@ -2,14 +2,27 @@ const { SaveAccountDocumentController } = require('../../../src/presentation/con
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
+  const validationSpy = makeValidationSpy()
   const uploadAccountDocumentUseCaseSpy = makeUploadAccountDocumentUseCaseSpy()
   const sut = new SaveAccountDocumentController({
-    uploadAccountDocumentUseCase: uploadAccountDocumentUseCaseSpy
+    uploadAccountDocumentUseCase: uploadAccountDocumentUseCaseSpy,
+    validation: validationSpy
   })
   return {
     sut,
-    uploadAccountDocumentUseCaseSpy
+    uploadAccountDocumentUseCaseSpy,
+    validationSpy
   }
+}
+
+const makeValidationSpy = () => {
+  class Validation {
+    validate (input) {
+      this.input = input
+      return this.error
+    }
+  }
+  return new Validation()
 }
 
 const makeUploadAccountDocumentUseCaseSpy = () => {
@@ -30,7 +43,7 @@ const makeRequest = () => ({
 })
 
 describe('Class Test', () => {
-  test('Should calll uploadAccountDocumentUseCase with correct document', async () => {
+  test('Should call uploadAccountDocumentUseCase with correct document', async () => {
     const { sut, uploadAccountDocumentUseCaseSpy } = makeSut()
     const request = makeRequest()
     await sut.handle(request)
@@ -50,5 +63,12 @@ describe('Class Test', () => {
     const request = makeRequest()
     const response = await sut.handle(request)
     expect(response).toEqual(HttpHelper.serverError())
+  })
+
+  test('Should call validation with correct input', async () => {
+    const { sut, validationSpy } = makeSut()
+    const request = makeRequest()
+    await sut.handle(request)
+    expect(validationSpy.input).toEqual(request)
   })
 })
