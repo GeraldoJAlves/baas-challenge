@@ -153,5 +153,13 @@ describe('Account Routes', () => {
         .get('/api/account-details')
         .expect(403)
     })
+
+    test('Should return 403 if invalid accessToken is provided', async () => {
+      await mockAccount()
+      await supertest(app)
+        .get('/api/account-details')
+        .set('x-access-token', '')
+        .expect(403)
+    })
   })
 })
