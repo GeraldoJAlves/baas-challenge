@@ -35,4 +35,10 @@ module.exports = class HttpHelper {
       statusCode: 200
     }
   }
+
+  static notFound () {
+    return {
+      statusCode: 404
+    }
+  }
 }
