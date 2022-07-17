@@ -1,4 +1,5 @@
 const { LoadAccountDetailsController } = require('../../../src/presentation/controllers')
+const { MissingParamError } = require('../../../src/presentation/errors')
 const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
@@ -85,5 +86,15 @@ describe('Load Account Details Controller', () => {
     }
     await sut.handle(request)
     expect(validationSpy.input).toBe(request)
+  })
+
+  test('Should return 400 validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new MissingParamError('accountId')
+    const request = {
+      accountId: 'any_id'
+    }
+    const response = await sut.handle(request)
+    expect(response).toEqual(HttpHelper.badRequest(validationSpy.error))
   })
 })
