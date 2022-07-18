@@ -74,11 +74,11 @@ describe('Account Routes', () => {
     await MongoHelper.getCollection('accounts').deleteMany({})
   })
 
-  describe('POST /account-details', () => {
+  describe('POST /account/details', () => {
     test('Should return 200 on update account', async () => {
       const { accessToken } = await mockAccount()
       await supertest(app)
-        .post('/api/account-details')
+        .post('/api/account/details')
         .set('x-access-token', accessToken)
         .send({
           fullName: 'any_name',
@@ -98,7 +98,7 @@ describe('Account Routes', () => {
     test('Should return 403 if accessToken is not provided', async () => {
       await mockAccount()
       await supertest(app)
-        .post('/api/account-details')
+        .post('/api/account/details')
         .send({
           fullName: 'any_name',
           birthDate: '2000-01-01',
@@ -117,7 +117,7 @@ describe('Account Routes', () => {
     test('Should return 400 if invalid data is provided', async () => {
       const { accessToken } = await mockAccount()
       await supertest(app)
-        .post('/api/account-details')
+        .post('/api/account/details')
         .set('x-access-token', accessToken)
         .send({
           accountId: 'any_id',
@@ -128,11 +128,11 @@ describe('Account Routes', () => {
     })
   })
 
-  describe('GET /account-details', () => {
+  describe('GET /account/details', () => {
     test('Should return 200 on load account', async () => {
       const { id, accessToken, ...details } = await mockAccountDetails()
       await supertest(app)
-        .get('/api/account-details')
+        .get('/api/account/details')
         .set('x-access-token', accessToken)
         .expect(200)
         .expect(details)
@@ -141,7 +141,7 @@ describe('Account Routes', () => {
     test('Should return 404 if account does not exist ', async () => {
       const { accessToken } = await mockAccount()
       await supertest(app)
-        .get('/api/account-details')
+        .get('/api/account/details')
         .set('x-access-token', accessToken)
         .expect(404)
         .expect('')
@@ -150,14 +150,14 @@ describe('Account Routes', () => {
     test('Should return 403 if no accessToken is provided', async () => {
       await mockAccount()
       await supertest(app)
-        .get('/api/account-details')
+        .get('/api/account/details')
         .expect(403)
     })
 
     test('Should return 403 if invalid accessToken is provided', async () => {
       await mockAccount()
       await supertest(app)
-        .get('/api/account-details')
+        .get('/api/account/details')
         .set('x-access-token', '')
         .expect(403)
     })
