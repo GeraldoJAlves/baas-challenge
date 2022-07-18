@@ -1,11 +1,14 @@
 module.exports = class UploadAccountDocumentUseCase {
   constructor ({
-    uploadAccountDocumentStorage
+    uploadAccountDocumentStorage,
+    updateAccountDocumentRepository
   }) {
     this.uploadAccountDocumentStorage = uploadAccountDocumentStorage
+    this.updateAccountDocumentRepository = updateAccountDocumentRepository
   }
 
   async upload (document) {
-    await this.uploadAccountDocumentStorage.upload(document)
+    const documentPath = await this.uploadAccountDocumentStorage.upload(document)
+    await this.updateAccountDocumentRepository.updateDocumentPath(documentPath)
   }
 }
