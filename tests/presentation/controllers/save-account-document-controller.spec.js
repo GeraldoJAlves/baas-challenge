@@ -50,6 +50,7 @@ describe('Upload Account Document UseCase', () => {
     const { sut, uploadAccountDocumentUseCaseSpy } = makeSut()
     const request = makeRequest()
     await sut.handle(request)
+    expect(uploadAccountDocumentUseCaseSpy.accountId).toEqual(request.accountId)
     expect(uploadAccountDocumentUseCaseSpy.document).toEqual(request.document)
   })
 
