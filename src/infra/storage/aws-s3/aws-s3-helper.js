@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk')
+const { InvalidParamError } = require('../../../presentation/errors')
 
 module.exports = {
   authorize: (credentials, endpoint) => {
@@ -15,7 +16,7 @@ module.exports = {
     return this.client
   },
   upload: async (bucket, file) => {
-    if (!this.client) return null
+    if (!this.client) throw new InvalidParamError('client')
     const { fileLocation } = await this.client.upload({
       Bucket: bucket,
       key: file.name,
