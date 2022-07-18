@@ -27,7 +27,8 @@ const makeUploadAccountDocumentStorageSpy = () => {
 
 const makeUpdateAccountDocumentRepositorySpy = () => {
   class UpdateAccountDocumentRepository {
-    async updateDocumentPath (path) {
+    async updateDocumentPath (accountId, path) {
+      this.accountId = accountId
       this.path = path
     }
   }
@@ -44,7 +45,7 @@ describe('Update Account Document UseCase', () => {
   test('Should call uploadAccountDocumentStorage with correct document', async () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
     const document = makeDocument()
-    await sut.upload(document)
+    await sut.upload('any_id', document)
     expect(uploadAccountDocumentStorageSpy.document).toEqual(document)
   })
 
@@ -52,7 +53,7 @@ describe('Update Account Document UseCase', () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
     uploadAccountDocumentStorageSpy.uploadDocument = async () => { throw new Error() }
     const document = makeDocument()
-    const promise = sut.upload(document)
+    const promise = sut.upload('any_id', document)
     expect(promise).rejects.toThrow()
   })
 
@@ -63,7 +64,8 @@ describe('Update Account Document UseCase', () => {
       uploadAccountDocumentStorageSpy
     } = makeSut()
     const document = makeDocument()
-    await sut.upload(document)
+    await sut.upload('any_id', document)
+    expect(updateAccountDocumentRepositorySpy.accountId).toEqual('any_id')
     expect(updateAccountDocumentRepositorySpy.path).toEqual(uploadAccountDocumentStorageSpy.path)
   })
 
@@ -75,6 +77,12 @@ describe('Update Account Document UseCase', () => {
   })
 
   test('Should throw if no document is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.upload('any_id')
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if no accountId is provided', async () => {
     const { sut } = makeSut()
     const promise = sut.upload()
     expect(promise).rejects.toThrow()

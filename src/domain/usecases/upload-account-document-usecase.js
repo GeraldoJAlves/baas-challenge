@@ -9,9 +9,10 @@ module.exports = class UploadAccountDocumentUseCase {
     this.updateAccountDocumentRepository = updateAccountDocumentRepository
   }
 
-  async upload (document) {
+  async upload (accountId, document) {
+    if (!accountId) throw new MissingParamError('accountId')
     if (!document) throw new MissingParamError('document')
     const documentPath = await this.uploadAccountDocumentStorage.uploadDocument(document)
-    await this.updateAccountDocumentRepository.updateDocumentPath(documentPath)
+    await this.updateAccountDocumentRepository.updateDocumentPath(accountId, documentPath)
   }
 }
