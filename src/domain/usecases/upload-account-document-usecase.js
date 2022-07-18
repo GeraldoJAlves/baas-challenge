@@ -6,6 +6,6 @@ module.exports = class UploadAccountDocumentUseCase {
   }
 
   async upload (document) {
-    this.uploadAccountDocumentStorage.upload(document)
+    await this.uploadAccountDocumentStorage.upload(document)
   }
 }
