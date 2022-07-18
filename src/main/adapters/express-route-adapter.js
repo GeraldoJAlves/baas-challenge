@@ -3,6 +3,7 @@ module.exports = (controller) => {
     const request = {
       ...(req.body || {}),
       ...(req.params || {}),
+      ...(req.files || {}),
       accountId: req.accountId
     }
     const { statusCode, body } = await controller.handle(request)
