@@ -262,5 +262,13 @@ describe('Account Mongo Repository', () => {
       const promise = sut.updateDocumentPath('any_id')
       expect(promise).rejects.toThrow()
     })
+
+    test('Should update documentPath if account exists', async () => {
+      const { sut } = makeSut()
+      const { id } = await mockAccount()
+      await sut.updateDocumentPath(id, 'any_bucket_path')
+      const account = await MongoHelper.getCollection('accounts').findOne({ _id: id })
+      expect(account.documentPath).toBe('any_bucket_path')
+    })
   })
 })
