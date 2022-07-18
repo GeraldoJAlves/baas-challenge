@@ -40,7 +40,7 @@ const makeDocument = () => ({
   mv: () => {}
 })
 
-describe('Class Test', () => {
+describe('Update Account Document UseCase', () => {
   test('Should call uploadAccountDocumentStorage with correct document', async () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
     const document = makeDocument()
