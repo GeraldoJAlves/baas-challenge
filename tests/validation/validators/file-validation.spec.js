@@ -1,4 +1,4 @@
-const { MissingParamError, InvalidUploadFileError } = require('../../../src/presentation/errors')
+const { MissingParamError, InvalidUploadFileError, InvalidFileTypeError } = require('../../../src/presentation/errors')
 const { FileValidation } = require('../../../src/validation/validators')
 
 const makeSut = (fieldName = 'document', mimeType = 'application/pdf') => {
@@ -32,5 +32,11 @@ describe('File Validation', () => {
     const { sut } = makeSut()
     const error = sut.validate(makeInvalidInput())
     expect(error).toEqual(new InvalidUploadFileError('document'))
+  })
+
+  test('Should return an error if mimetype not equal', async () => {
+    const { sut } = makeSut('document', 'plain/text')
+    const error = sut.validate(makeInput())
+    expect(error).toEqual(new InvalidFileTypeError('document', 'plain/text'))
   })
 })
