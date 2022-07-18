@@ -35,4 +35,12 @@ describe('Class Test', () => {
     await sut.upload(document)
     expect(uploadAccountDocumentStorageSpy.document).toEqual(document)
   })
+
+  test('Should throw if uploadAccountDocumentStorage throws', async () => {
+    const { sut, uploadAccountDocumentStorageSpy } = makeSut()
+    uploadAccountDocumentStorageSpy.upload = async () => { throw new Error() }
+    const document = makeDocument()
+    const promise = sut.upload(document)
+    expect(promise).rejects.toThrow()
+  })
 })
