@@ -1,3 +1,5 @@
+const { MissingParamError } = require('../../presentation/errors')
+
 module.exports = class UploadAccountDocumentUseCase {
   constructor ({
     uploadAccountDocumentStorage,
@@ -8,6 +10,7 @@ module.exports = class UploadAccountDocumentUseCase {
   }
 
   async upload (document) {
+    if (!document) throw new MissingParamError('document')
     const documentPath = await this.uploadAccountDocumentStorage.upload(document)
     await this.updateAccountDocumentRepository.updateDocumentPath(documentPath)
   }
