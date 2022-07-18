@@ -2,12 +2,15 @@ const { UploadAccountDocumentUseCase } = require('../../../src/domain/usecases')
 
 const makeSut = () => {
   const uploadAccountDocumentStorageSpy = makeUploadAccountDocumentStorageSpy()
+  const updateAccountDocumentRepositorySpy = makeUpdateAccountDocumentRepositorySpy()
   const sut = new UploadAccountDocumentUseCase({
-    uploadAccountDocumentStorage: uploadAccountDocumentStorageSpy
+    uploadAccountDocumentStorage: uploadAccountDocumentStorageSpy,
+    updateAccountDocumentRepository: updateAccountDocumentRepositorySpy
   })
   return {
     sut,
-    uploadAccountDocumentStorageSpy
+    uploadAccountDocumentStorageSpy,
+    updateAccountDocumentRepositorySpy
   }
 }
 
@@ -20,6 +23,15 @@ const makeUploadAccountDocumentStorageSpy = () => {
     }
   }
   return new UploadAccountDocumentStorage()
+}
+
+const makeUpdateAccountDocumentRepositorySpy = () => {
+  class UpdateAccountDocumentRepository {
+    async updateDocumentPath (path) {
+      this.path = path
+    }
+  }
+  return new UpdateAccountDocumentRepository()
 }
 
 const makeDocument = () => ({
@@ -42,5 +54,16 @@ describe('Class Test', () => {
     const document = makeDocument()
     const promise = sut.upload(document)
     expect(promise).rejects.toThrow()
+  })
+
+  test('Should call updateAccountDocumentRepository with correct path', async () => {
+    const {
+      sut,
+      updateAccountDocumentRepositorySpy,
+      uploadAccountDocumentStorageSpy
+    } = makeSut()
+    const document = makeDocument()
+    await sut.upload(document)
+    expect(updateAccountDocumentRepositorySpy.path).toEqual(uploadAccountDocumentStorageSpy.path)
   })
 })
