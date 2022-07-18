@@ -11,7 +11,7 @@ module.exports = class UploadAccountDocumentUseCase {
 
   async upload (document) {
     if (!document) throw new MissingParamError('document')
-    const documentPath = await this.uploadAccountDocumentStorage.upload(document)
+    const documentPath = await this.uploadAccountDocumentStorage.uploadDocument(document)
     await this.updateAccountDocumentRepository.updateDocumentPath(documentPath)
   }
 }

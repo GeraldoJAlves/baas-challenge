@@ -17,7 +17,7 @@ const makeSut = () => {
 const makeUploadAccountDocumentStorageSpy = () => {
   class UploadAccountDocumentStorage {
     path = '/s3/bucket/any_file'
-    async upload (document) {
+    async uploadDocument (document) {
       this.document = document
       return this.path
     }
@@ -50,7 +50,7 @@ describe('Class Test', () => {
 
   test('Should throw if uploadAccountDocumentStorage throws', async () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
-    uploadAccountDocumentStorageSpy.upload = async () => { throw new Error() }
+    uploadAccountDocumentStorageSpy.uploadDocument = async () => { throw new Error() }
     const document = makeDocument()
     const promise = sut.upload(document)
     expect(promise).rejects.toThrow()
