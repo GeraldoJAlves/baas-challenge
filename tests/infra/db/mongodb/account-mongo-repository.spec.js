@@ -245,7 +245,21 @@ describe('Account Mongo Repository', () => {
     test('Should throw if no id is provided', async () => {
       const { sut } = makeSut()
       await mockAccountDetails()
-      const promise = sut.loadDetails('any_id')
+      const promise = sut.loadDetails()
+      expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('updateDocumentPath()', () => {
+    test('Should throw if no id is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.updateDocumentPath()
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no documentPath is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.updateDocumentPath('any_id')
       expect(promise).rejects.toThrow()
     })
   })
