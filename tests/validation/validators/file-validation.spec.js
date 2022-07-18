@@ -12,7 +12,7 @@ const makeSut = (fieldName = 'document', mimeType = 'application/pdf') => {
 const makeInput = () => ({
   document: {
     name: 'any_name',
-    mimetype: 'any_name',
+    mimetype: 'application/pdf',
     data: 'content_data'
   }
 })
@@ -38,5 +38,11 @@ describe('File Validation', () => {
     const { sut } = makeSut('document', 'plain/text')
     const error = sut.validate(makeInput())
     expect(error).toEqual(new InvalidFileTypeError('document', 'plain/text'))
+  })
+
+  test('Should return false if valid file is provided', async () => {
+    const { sut } = makeSut()
+    const error = sut.validate(makeInput())
+    expect(error).toBeFalsy()
   })
 })
