@@ -7,7 +7,7 @@ module.exports = {
     fileLocation = 'any_file_location'
     async upload (config) {
       this.config = config
-      return this.fileLocation
+      return { fileLocation: this.fileLocation }
     }
   }
 }

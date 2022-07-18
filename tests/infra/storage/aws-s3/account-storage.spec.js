@@ -28,4 +28,11 @@ describe('Account Storage', () => {
       ACL: 'private'
     })
   })
+
+  test('Should return fileLocation if AWS S3 succeeds', async () => {
+    const { sut } = makeSut()
+    const document = makeDocument()
+    const fileLocation = await sut.uploadDocument(document)
+    expect(fileLocation).toBe(AWSS3Helper.getClient().fileLocation)
+  })
 })
