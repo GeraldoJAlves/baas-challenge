@@ -28,7 +28,8 @@ const makeValidationSpy = () => {
 
 const makeUploadAccountDocumentUseCaseSpy = () => {
   class UploadAccountDocumentUseCase {
-    async upload (document) {
+    async upload (accountId, document) {
+      this.accountId = accountId
       this.document = document
     }
   }
@@ -36,6 +37,7 @@ const makeUploadAccountDocumentUseCaseSpy = () => {
 }
 
 const makeRequest = () => ({
+  accountId: 'any_id',
   document: {
     name: 'any_document',
     mimetype: 'application/pdf',

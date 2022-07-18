@@ -10,8 +10,8 @@ module.exports = class SaveAccountDocumentController {
     try {
       const error = this.validation.validate(request)
       if (error) return HttpHelper.badRequest(error)
-      const { document } = request
-      await this.uploadAccountDocumentUseCase.upload(document)
+      const { document, accountId } = request
+      await this.uploadAccountDocumentUseCase.upload(accountId, document)
       return HttpHelper.noContent()
     } catch (error) {
       return HttpHelper.serverError(error)
