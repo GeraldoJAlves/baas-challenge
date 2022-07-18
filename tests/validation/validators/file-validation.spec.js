@@ -1,4 +1,4 @@
-const { MissingParamError } = require('../../../src/presentation/errors')
+const { MissingParamError, InvalidUploadFileError } = require('../../../src/presentation/errors')
 const { FileValidation } = require('../../../src/validation/validators')
 
 const makeSut = (fieldName = 'document', mimeType = 'application/pdf') => {
@@ -17,10 +17,20 @@ const makeInput = () => ({
   }
 })
 
+const makeInvalidInput = () => ({
+  document: 'other_value'
+})
+
 describe('File Validation', () => {
   test('Should return an error if field does not exist', async () => {
     const { sut } = makeSut('another_document')
     const error = sut.validate(makeInput())
     expect(error).toEqual(new MissingParamError('another_document'))
+  })
+
+  test('Should return an error if field does not have a file type', async () => {
+    const { sut } = makeSut()
+    const error = sut.validate(makeInvalidInput())
+    expect(error).toEqual(new InvalidUploadFileError('document'))
   })
 })
