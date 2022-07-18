@@ -16,6 +16,10 @@ describe('Account Storage', () => {
     AWSS3Helper.authorize('host', '/files')
   })
 
+  afterAll(() => {
+    AWSS3Helper.clean()
+  })
+
   test('Should call AWS S3 with correct values', async () => {
     const { sut } = makeSut()
     const document = makeDocument()
@@ -34,5 +38,21 @@ describe('Account Storage', () => {
     const document = makeDocument()
     const fileLocation = await sut.uploadDocument(document)
     expect(fileLocation).toBe(AWSS3Helper.getClient().fileLocation)
+  })
+
+  test('Should throw if AWS S3 throws', async () => {
+    const { sut } = makeSut()
+    AWSS3Helper.getClient().upload = async () => { throw new Error() }
+    const document = makeDocument()
+    const promise = sut.uploadDocument(document)
+    expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if AWS S3 does not authorize', async () => {
+    const { sut } = makeSut()
+    AWSS3Helper.clean()
+    const document = makeDocument()
+    const promise = sut.uploadDocument(document)
+    expect(promise).rejects.toThrow()
   })
 })
