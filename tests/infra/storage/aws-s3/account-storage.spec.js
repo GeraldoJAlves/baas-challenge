@@ -13,7 +13,7 @@ const makeDocument = () => ({
 
 describe('Account Storage', () => {
   beforeAll(() => {
-    AWSS3Helper.authorize('host', '/files')
+    AWSS3Helper.authorize('host', '/files', 'any_bucket')
   })
 
   afterAll(() => {
@@ -25,7 +25,7 @@ describe('Account Storage', () => {
     const document = makeDocument()
     await sut.uploadDocument(document)
     expect(AWSS3Helper.getClient().config).toEqual({
-      Bucket: 'account',
+      Bucket: 'any_bucket',
       key: document.name,
       Body: document.data,
       ContentType: document.mimetype,
