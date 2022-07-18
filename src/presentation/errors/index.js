@@ -4,6 +4,7 @@ const MissingParamError = require('./missing-param-error')
 const UnauthorizedError = require('./unauthorized-error')
 const AccessDeniedError = require('./access-denied-error')
 const InvalidUploadFileError = require('./invalid-upload-file-error')
+const InvalidFileTypeError = require('./invalid-file-type-error')
 
 module.exports = {
   InvalidParamError,
@@ -11,5 +12,6 @@ module.exports = {
   MissingParamError,
   UnauthorizedError,
   AccessDeniedError,
-  InvalidUploadFileError
+  InvalidUploadFileError,
+  InvalidFileTypeError
 }
