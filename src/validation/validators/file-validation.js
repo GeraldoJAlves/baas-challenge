@@ -10,6 +10,6 @@ module.exports = class FileValidation {
     if (!input[this.fieldName]) return new MissingParamError(this.fieldName)
     const file = input[this.fieldName]
     if (!file.name || !file.mimetype || !file.data) return new InvalidUploadFileError(this.fieldName)
-    if (file.mimeType !== this.mimeType) return new InvalidFileTypeError(this.fieldName, this.mimeType)
+    if (file.mimetype !== this.mimeType) return new InvalidFileTypeError(this.fieldName, this.mimeType)
   }
 }
