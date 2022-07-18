@@ -66,4 +66,11 @@ describe('Class Test', () => {
     await sut.upload(document)
     expect(updateAccountDocumentRepositorySpy.path).toEqual(uploadAccountDocumentStorageSpy.path)
   })
+
+  test('Should throw if updateAccountDocumentRepository throws', async () => {
+    const { sut, updateAccountDocumentRepositorySpy } = makeSut()
+    updateAccountDocumentRepositorySpy.updateDocumentPath = async () => { throw new Error() }
+    const promise = sut.upload(makeDocument())
+    expect(promise).rejects.toThrow()
+  })
 })
