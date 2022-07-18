@@ -73,4 +73,10 @@ describe('Class Test', () => {
     const promise = sut.upload(makeDocument())
     expect(promise).rejects.toThrow()
   })
+
+  test('Should throw if no document is provided', async () => {
+    const { sut } = makeSut()
+    const promise = sut.upload()
+    expect(promise).rejects.toThrow()
+  })
 })
