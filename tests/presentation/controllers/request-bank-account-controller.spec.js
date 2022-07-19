@@ -1,4 +1,5 @@
 const { RequestBankAccountController } = require('../../../src/presentation/controllers')
+const { HttpHelper } = require('../../../src/presentation/helpers')
 
 const makeSut = () => {
   const requestBankAccountUseCaseSpy = makeRequestBankAccountUseCaseSpy()
@@ -31,5 +32,12 @@ describe('Request Bank Account Controller', () => {
     const request = makeRequest()
     await sut.handle(request)
     expect(requestBankAccountUseCaseSpy.accountId).toBe(request.accountId)
+  })
+
+  test('Should return 500 if requestBankAccountUseCase throws', async () => {
+    const { sut, requestBankAccountUseCaseSpy } = makeSut()
+    requestBankAccountUseCaseSpy.request = () => { throw new Error() }
+    const response = await sut.handle(makeRequest())
+    expect(response).toEqual(HttpHelper.serverError())
   })
 })
