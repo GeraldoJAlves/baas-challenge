@@ -79,6 +79,7 @@ describe('Account Routes', () => {
 
   beforeEach(async () => {
     await MongoHelper.getCollection('accounts').deleteMany({})
+    s3Mock.reset()
   })
 
   describe('POST /account/details', () => {
