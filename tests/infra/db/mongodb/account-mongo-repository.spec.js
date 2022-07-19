@@ -253,20 +253,20 @@ describe('Account Mongo Repository', () => {
   describe('updateDocumentPath()', () => {
     test('Should throw if no id is provided', async () => {
       const { sut } = makeSut()
-      const promise = sut.updateDocumentPath()
+      const promise = sut.updateDocumentPath({ documentPath: 'any_bucket_path' })
       expect(promise).rejects.toThrow()
     })
 
     test('Should throw if no documentPath is provided', async () => {
       const { sut } = makeSut()
-      const promise = sut.updateDocumentPath('any_id')
+      const promise = sut.updateDocumentPath({ id: 'any_id' })
       expect(promise).rejects.toThrow()
     })
 
     test('Should update documentPath if account exists', async () => {
       const { sut } = makeSut()
       const { id } = await mockAccount()
-      await sut.updateDocumentPath(id, 'any_bucket_path')
+      await sut.updateDocumentPath({ id, documentPath: 'any_bucket_path' })
       const account = await MongoHelper.getCollection('accounts').findOne({ _id: id })
       expect(account.documentPath).toBe('any_bucket_path')
     })

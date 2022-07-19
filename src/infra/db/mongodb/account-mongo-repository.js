@@ -65,7 +65,7 @@ module.exports = class AccountMongoRepository {
     await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { details: { fullName, birthDate, fatherName, motherName, rg, cpf, address, city, state, cep } } })
   }
 
-  async updateDocumentPath (id, documentPath) {
+  async updateDocumentPath ({ id, documentPath } = {}) {
     if (!id) throw new MissingParamError('id')
     if (!documentPath) throw new MissingParamError('documentPath')
     await MongoHelper.getCollection('accounts').updateOne({ _id: id }, { $set: { documentPath } })

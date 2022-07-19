@@ -17,7 +17,8 @@ const makeSut = () => {
 const makeUploadAccountDocumentStorageSpy = () => {
   class UploadAccountDocumentStorage {
     path = '/s3/bucket/any_file'
-    async uploadDocument (document) {
+    async uploadDocument ({ fileKey, document }) {
+      this.fileKey = fileKey
       this.document = document
       return this.path
     }
@@ -27,9 +28,9 @@ const makeUploadAccountDocumentStorageSpy = () => {
 
 const makeUpdateAccountDocumentRepositorySpy = () => {
   class UpdateAccountDocumentRepository {
-    async updateDocumentPath (accountId, path) {
-      this.accountId = accountId
-      this.path = path
+    async updateDocumentPath ({ id, documentPath }) {
+      this.id = id
+      this.documentPath = documentPath
     }
   }
   return new UpdateAccountDocumentRepository()
@@ -45,7 +46,8 @@ describe('Update Account Document UseCase', () => {
   test('Should call uploadAccountDocumentStorage with correct document', async () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
     const document = makeDocument()
-    await sut.upload('any_id', document)
+    await sut.upload({ accountId: 'any_id', document })
+    expect(uploadAccountDocumentStorageSpy.fileKey).toEqual('any_id.pdf')
     expect(uploadAccountDocumentStorageSpy.document).toEqual(document)
   })
 
@@ -53,7 +55,7 @@ describe('Update Account Document UseCase', () => {
     const { sut, uploadAccountDocumentStorageSpy } = makeSut()
     uploadAccountDocumentStorageSpy.uploadDocument = async () => { throw new Error() }
     const document = makeDocument()
-    const promise = sut.upload('any_id', document)
+    const promise = sut.upload({ accountId: 'any_id', document })
     expect(promise).rejects.toThrow()
   })
 
@@ -64,21 +66,21 @@ describe('Update Account Document UseCase', () => {
       uploadAccountDocumentStorageSpy
     } = makeSut()
     const document = makeDocument()
-    await sut.upload('any_id', document)
-    expect(updateAccountDocumentRepositorySpy.accountId).toEqual('any_id')
-    expect(updateAccountDocumentRepositorySpy.path).toEqual(uploadAccountDocumentStorageSpy.path)
+    await sut.upload({ accountId: 'any_id', document })
+    expect(updateAccountDocumentRepositorySpy.id).toEqual('any_id')
+    expect(updateAccountDocumentRepositorySpy.documentPath).toEqual(uploadAccountDocumentStorageSpy.path)
   })
 
   test('Should throw if updateAccountDocumentRepository throws', async () => {
     const { sut, updateAccountDocumentRepositorySpy } = makeSut()
     updateAccountDocumentRepositorySpy.updateDocumentPath = async () => { throw new Error() }
-    const promise = sut.upload(makeDocument())
+    const promise = sut.upload({ accountId: 'any_id', document: makeDocument() })
     expect(promise).rejects.toThrow()
   })
 
   test('Should throw if no document is provided', async () => {
     const { sut } = makeSut()
-    const promise = sut.upload('any_id')
+    const promise = sut.upload({ accountId: 'any_id' })
     expect(promise).rejects.toThrow()
   })
 

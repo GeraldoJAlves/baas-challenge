@@ -1,8 +1,22 @@
-const { AccountStorage, AWSS3Helper } = require('../../../../src/infra/storage/aws-s3')
+const { AccountStorage } = require('../../../../src/infra/storage/aws-s3')
 
 const makeSut = () => {
-  const sut = new AccountStorage()
-  return { sut }
+  const storageSpy = makeStorageSpy()
+  const sut = new AccountStorage({
+    storage: storageSpy
+  })
+  return { sut, storageSpy }
+}
+
+const makeStorageSpy = () => {
+  class Storage {
+    async upload ({ key, file }) {
+      this.file = file
+      this.key = key
+      return this.filePath
+    }
+  }
+  return new Storage()
 }
 
 const makeDocument = () => ({
@@ -12,47 +26,26 @@ const makeDocument = () => ({
 })
 
 describe('Account Storage', () => {
-  beforeAll(() => {
-    AWSS3Helper.authorize('host', '/files', 'any_bucket')
-  })
-
-  afterAll(() => {
-    AWSS3Helper.clean()
-  })
-
-  test('Should call AWS S3 with correct values', async () => {
-    const { sut } = makeSut()
+  test('Should call storage with correct values', async () => {
+    const { sut, storageSpy } = makeSut()
     const document = makeDocument()
-    await sut.uploadDocument(document)
-    expect(AWSS3Helper.getClient().config).toEqual({
-      Bucket: 'any_bucket',
-      key: document.name,
-      Body: document.data,
-      ContentType: document.mimetype,
-      ACL: 'private'
-    })
+    await sut.uploadDocument({ fileKey: 'any_key_file', document })
+    expect(storageSpy.key).toBe('any_key_file')
+    expect(storageSpy.file).toBe(document)
   })
 
-  test('Should return fileLocation if AWS S3 succeeds', async () => {
-    const { sut } = makeSut()
+  test('Should return documentPath if storage succeeds', async () => {
+    const { sut, storageSpy } = makeSut()
     const document = makeDocument()
-    const fileLocation = await sut.uploadDocument(document)
-    expect(fileLocation).toBe(AWSS3Helper.getClient().fileLocation)
+    const documentPath = await sut.uploadDocument({ fileKey: 'any_key_file', document })
+    expect(documentPath).toBe(storageSpy.documentPath)
   })
 
-  test('Should throw if AWS S3 throws', async () => {
-    const { sut } = makeSut()
-    AWSS3Helper.getClient().upload = async () => { throw new Error() }
+  test('Should throw if storage throws', async () => {
+    const { sut, storageSpy } = makeSut()
+    storageSpy.upload = async () => { throw new Error() }
     const document = makeDocument()
-    const promise = sut.uploadDocument(document)
-    expect(promise).rejects.toThrow()
-  })
-
-  test('Should throw if AWS S3 does not authorize', async () => {
-    const { sut } = makeSut()
-    AWSS3Helper.clean()
-    const document = makeDocument()
-    const promise = sut.uploadDocument(document)
+    const promise = sut.uploadDocument({ fileKey: 'any_key_file', document })
     expect(promise).rejects.toThrow()
   })
 })

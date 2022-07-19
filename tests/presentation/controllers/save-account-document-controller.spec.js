@@ -28,7 +28,7 @@ const makeValidationSpy = () => {
 
 const makeUploadAccountDocumentUseCaseSpy = () => {
   class UploadAccountDocumentUseCase {
-    async upload (accountId, document) {
+    async upload ({ accountId, document }) {
       this.accountId = accountId
       this.document = document
     }
