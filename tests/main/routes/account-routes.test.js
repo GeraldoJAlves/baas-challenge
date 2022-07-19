@@ -2,12 +2,19 @@ jest.unmock('bcrypt')
 jest.unmock('jsonwebtoken')
 jest.unmock('validator')
 
-const MongoHelper = require('../../../src/infra/db/mongodb/mongo-helper')
-const setupApp = require('../../../src/main/config/app')
-const env = require('../../../src/main/config/env')
+const { mockClient } = require('aws-sdk-client-mock')
+const { mockLibStorageUpload } = require('aws-sdk-client-mock/libStorage')
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
+const s3Mock = mockClient(S3Client)
+mockLibStorageUpload(s3Mock)
+
 const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const jwt = require('jsonwebtoken')
+const { join } = require('path')
+const MongoHelper = require('../../../src/infra/db/mongodb/mongo-helper')
+const env = require('../../../src/main/config/env')
+const setupApp = require('../../../src/main/config/app')
 const { jwtSecret } = require('../../../src/main/config/env')
 
 const mockAccount = async (role = 'user') => {
@@ -160,6 +167,28 @@ describe('Account Routes', () => {
         .get('/api/account/details')
         .set('x-access-token', '')
         .expect(403)
+    })
+  })
+
+  describe('POST /account/document', () => {
+    test('Should return 204 on update account', async () => {
+      const { accessToken } = await mockAccount()
+      await supertest(app)
+        .post('/api/account/document')
+        .set('x-access-token', accessToken)
+        .attach('document', join(__dirname, 'testFiles/test.pdf'))
+        .expect(204)
+        .expect('')
+    })
+
+    test('Should return 500 on upload error', async () => {
+      const { accessToken } = await mockAccount()
+      s3Mock.on(PutObjectCommand).rejects()
+      await supertest(app)
+        .post('/api/account/document')
+        .set('x-access-token', accessToken)
+        .attach('document', join(__dirname, 'testFiles/test.pdf'))
+        .expect(500)
     })
   })
 })
