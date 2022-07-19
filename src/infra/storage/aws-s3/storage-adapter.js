@@ -3,6 +3,7 @@ const {
   CreateBucketCommand,
   PutObjectCommand
 } = require('@aws-sdk/client-s3')
+const { MissingParamError, InvalidParamError } = require('../../../presentation/errors')
 
 module.exports = class StorageAdapter {
   constructor ({
@@ -27,6 +28,9 @@ module.exports = class StorageAdapter {
   }
 
   async upload ({ file, key }) {
+    if (!file) throw new MissingParamError('file')
+    if (!key) throw new MissingParamError('key')
+    if (!file.data || !file.name || !file.mimetype) throw new InvalidParamError('file')
     await this.createBucket()
     await this.client.send(new PutObjectCommand({
       Bucket: this.bucket,
