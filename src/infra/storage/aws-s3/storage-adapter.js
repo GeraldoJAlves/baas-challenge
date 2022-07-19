@@ -10,7 +10,7 @@ module.exports = class StorageAdapter {
     endpoint,
     bucket,
     region
-  }) {
+  } = {}) {
     this.client = new S3Client({
       credentials,
       endpoint,
