@@ -1,6 +1,6 @@
 const { mockClient } = require('aws-sdk-client-mock')
 const { mockLibStorageUpload } = require('aws-sdk-client-mock/libStorage')
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
+const { S3Client, PutObjectCommand, CreateBucketCommand } = require('@aws-sdk/client-s3')
 const { StorageAdapter } = require('../../../../src/infra/storage/aws-s3')
 const s3Mock = mockClient(S3Client)
 mockLibStorageUpload(s3Mock)
@@ -15,6 +15,10 @@ const makeSut = () => {
 const makeFile = () => ({ name: 'any_filename', mimetype: 'text/plain', data: 'any_data_document' })
 
 describe('Storage Adapter', () => {
+  beforeEach(() => {
+    s3Mock.reset()
+  })
+
   describe('upload()', () => {
     test('Should call AWS S3 with correct values', async () => {
       const { sut } = makeSut()
@@ -62,6 +66,14 @@ describe('Storage Adapter', () => {
         key: 'any_file.txt'
       })
       expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('createBucket()', () => {
+    test('Should call AWS S3 with correct values', async () => {
+      const { sut } = makeSut()
+      await sut.createBucket()
+      expect(s3Mock).toHaveReceivedCommandTimes(CreateBucketCommand, 1)
     })
   })
 })
