@@ -36,6 +36,13 @@ module.exports = class HttpHelper {
     }
   }
 
+  static conflict (error) {
+    return {
+      body: error,
+      statusCode: 409
+    }
+  }
+
   static noContent (body) {
     return {
       statusCode: 204

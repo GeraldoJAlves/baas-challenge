@@ -1,3 +1,4 @@
+const { AccountAlreadyRequestedError } = require('../errors')
 const { HttpHelper } = require('../helpers')
 
 module.exports = class RequestBankAccountController {
@@ -9,7 +10,8 @@ module.exports = class RequestBankAccountController {
 
   async handle ({ accountId } = {}) {
     try {
-      await this.requestBankAccountUseCase.request(accountId)
+      const alreadyRequested = await this.requestBankAccountUseCase.request(accountId)
+      if (alreadyRequested) return HttpHelper.conflict(new AccountAlreadyRequestedError())
     } catch (error) {
       return HttpHelper.serverError(error)
     }
