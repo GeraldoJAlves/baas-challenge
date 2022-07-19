@@ -36,6 +36,13 @@ module.exports = class HttpHelper {
     }
   }
 
+  static created (body) {
+    return {
+      body,
+      statusCode: 201
+    }
+  }
+
   static conflict (error) {
     return {
       body: error,
