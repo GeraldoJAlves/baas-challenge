@@ -15,10 +15,10 @@ const makeSut = () => {
 
 const makeRequestBankAccountUseCaseSpy = () => {
   class RequestBankAccountUseCase {
-    alreadyRequested = false
+    requestedId = 'any_request_id'
     async request (accountId) {
       this.accountId = accountId
-      return this.alreadyRequested
+      return this.requestedId
     }
   }
   return new RequestBankAccountUseCase()
@@ -43,10 +43,18 @@ describe('Request Bank Account Controller', () => {
     expect(response).toEqual(HttpHelper.serverError())
   })
 
-  test('Should return 409 if the account already requested', async () => {
+  test('Should return 409 if requestBankAccountUseCase returns null', async () => {
     const { sut, requestBankAccountUseCaseSpy } = makeSut()
-    requestBankAccountUseCaseSpy.alreadyRequested = true
+    requestBankAccountUseCaseSpy.requestedId = null
     const response = await sut.handle(makeRequest())
     expect(response).toEqual(HttpHelper.conflict(new AccountAlreadyRequestedError()))
+  })
+
+  test('Should return 201 if the request was created', async () => {
+    const { sut, requestBankAccountUseCaseSpy } = makeSut()
+    const response = await sut.handle(makeRequest())
+    expect(response).toEqual(HttpHelper.created({
+      requestedId: requestBankAccountUseCaseSpy.requestedId
+    }))
   })
 })
