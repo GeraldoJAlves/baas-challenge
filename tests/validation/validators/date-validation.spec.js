@@ -45,4 +45,22 @@ describe('Date Validation', () => {
     const error = sut.validate(makeInput())
     expect(error).toEqual(new InvalidDateError('date'))
   })
+
+  test('Should return false if an dateValidator returns true', () => {
+    const { sut } = makeSut()
+    const error = sut.validate(makeInput())
+    expect(error).toBeFalsy()
+  })
+
+  test('Should return false if input no has field', () => {
+    const { sut } = makeSut('other')
+    const error = sut.validate(makeInput())
+    expect(error).toBeFalsy()
+  })
+
+  test('Should return false if no input is provided', () => {
+    const { sut } = makeSut()
+    const error = sut.validate()
+    expect(error).toBeFalsy()
+  })
 })
