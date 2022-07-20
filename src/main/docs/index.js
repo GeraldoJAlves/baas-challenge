@@ -1,3 +1,7 @@
+const components = require('./components')
+const paths = require('./paths')
+const schemas = require('./schemas')
+
 module.exports = {
   openapi: '3.0.0',
   info: {
@@ -16,5 +20,8 @@ module.exports = {
   tags: [{
     name: 'Login',
     description: 'APIs relacionadas a Login'
-  }]
+  }],
+  paths,
+  schemas,
+  components
 }
