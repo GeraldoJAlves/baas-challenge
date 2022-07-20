@@ -6,7 +6,7 @@ module.exports = class RequiredFieldValidation {
   }
 
   validate (input) {
-    if (input[this.fieldName] === undefined) {
+    if (input[this.fieldName] === '' || input[this.fieldName] === undefined) {
       return new MissingParamError(this.fieldName)
     }
   }

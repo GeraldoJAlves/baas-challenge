@@ -28,6 +28,13 @@ describe('Required Field Validation', () => {
     expect(error).toEqual(new MissingParamError('email'))
   })
 
+  test('Should return an MissingParamError if field has an empty string', () => {
+    const { sut } = makeSut()
+    const input = { email: '' }
+    const error = sut.validate(input)
+    expect(error).toEqual(new MissingParamError('email'))
+  })
+
   test('Should throw if no input is provided', () => {
     const { sut } = makeSut()
     expect(() => {
