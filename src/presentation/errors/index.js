@@ -7,6 +7,7 @@ const InvalidUploadFileError = require('./invalid-upload-file-error')
 const InvalidFileTypeError = require('./invalid-file-type-error')
 const AccountAlreadyRequestedError = require('./account-already-requested-error')
 const InvalidCpfError = require('./invalid-cpf-error')
+const InvalidDateError = require('./invalid-date-error')
 
 module.exports = {
   InvalidParamError,
@@ -17,5 +18,6 @@ module.exports = {
   InvalidUploadFileError,
   InvalidFileTypeError,
   AccountAlreadyRequestedError,
-  InvalidCpfError
+  InvalidCpfError,
+  InvalidDateError
 }
