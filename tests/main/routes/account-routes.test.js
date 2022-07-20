@@ -114,6 +114,32 @@ describe('Account Routes', () => {
         })
         .expect(400)
     })
+
+    test('Should return 400 if an invalid date is provided', async () => {
+      const { accessToken } = await mockAccount()
+      const details = makeAccountDetails()
+      await supertest(app)
+        .post('/api/account/details')
+        .set('x-access-token', accessToken)
+        .send({
+          ...details,
+          birthDate: 'invalid_date'
+        })
+        .expect(400)
+    })
+
+    test('Should return 400 if an invalid cpf is provided', async () => {
+      const { accessToken } = await mockAccount()
+      const details = makeAccountDetails()
+      await supertest(app)
+        .post('/api/account/details')
+        .set('x-access-token', accessToken)
+        .send({
+          ...details,
+          cpf: 'invalid_cpf'
+        })
+        .expect(400)
+    })
   })
 
   describe('GET /account/details', () => {
