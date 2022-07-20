@@ -4,6 +4,7 @@ const ValidationComposite = require('./validation-composite')
 const CompareFieldsValidation = require('./compare-fields-validation')
 const FileValidation = require('./file-validation')
 const CpfValidation = require('./cpf-validation')
+const DateValidation = require('./date-validation')
 
 module.exports = {
   EmailValidation,
@@ -11,5 +12,6 @@ module.exports = {
   ValidationComposite,
   CompareFieldsValidation,
   FileValidation,
-  CpfValidation
+  CpfValidation,
+  DateValidation
 }
