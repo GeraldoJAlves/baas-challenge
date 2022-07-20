@@ -13,4 +13,15 @@ describe('Date Validator Adapter', () => {
     expect(validator.date).toBe('any_date')
     expect(validator.options.format).toBe('YYYY-MM-DD')
   })
+
+  test('Should throw if no date is provided', () => {
+    const { sut } = makeSut()
+    expect(() => { sut.isValid() }).toThrow()
+  })
+
+  test('Should throw if Validator throws', () => {
+    const { sut } = makeSut()
+    validator.isDate = () => { throw new Error() }
+    expect(() => sut.isValid('any_date')).toThrow()
+  })
 })
