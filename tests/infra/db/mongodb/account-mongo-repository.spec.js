@@ -95,6 +95,7 @@ describe('Account Mongo Repository', () => {
       const { sut } = makeSut()
       const promise = sut.add({
         name: 'any_name',
+        role: 'user',
         password: 'hashed_password'
       })
       expect(promise).rejects.toThrow()
@@ -104,6 +105,7 @@ describe('Account Mongo Repository', () => {
       const { sut } = makeSut()
       const promise = sut.add({
         email: 'any_email@email.com',
+        role: 'user',
         password: 'hashed_password'
       })
       expect(promise).rejects.toThrow()
@@ -113,6 +115,17 @@ describe('Account Mongo Repository', () => {
       const { sut } = makeSut()
       const promise = sut.add({
         email: 'any_email@email.com',
+        role: 'user',
+        name: 'any_name'
+      })
+      expect(promise).rejects.toThrow()
+    })
+
+    test('Should throw if no role is provided', async () => {
+      const { sut } = makeSut()
+      const promise = sut.add({
+        email: 'any_email@email.com',
+        password: 'hashed_password',
         name: 'any_name'
       })
       expect(promise).rejects.toThrow()
@@ -123,6 +136,7 @@ describe('Account Mongo Repository', () => {
       await sut.add({
         email: 'any_email@email.com',
         name: 'any_name',
+        role: 'user',
         password: 'hashed_password'
       })
       const account = await MongoHelper.getCollection('accounts').findOne({ email: 'any_email@email.com' })
@@ -136,6 +150,7 @@ describe('Account Mongo Repository', () => {
       const isValid = await sut.add({
         email: 'any_email@email.com',
         name: 'any_name',
+        role: 'user',
         password: 'hashed_password'
       })
       expect(isValid).toBeTruthy()

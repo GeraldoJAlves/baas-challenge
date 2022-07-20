@@ -33,11 +33,12 @@ module.exports = class AccountMongoRepository {
     return account !== null
   }
 
-  async add ({ name, email, password } = {}) {
+  async add ({ name, email, role, password } = {}) {
     if (!name) throw new MissingParamError('name')
     if (!email) throw new MissingParamError('email')
     if (!password) throw new MissingParamError('password')
-    const result = await MongoHelper.getCollection('accounts').insertOne({ name, email, password })
+    if (!role) throw new MissingParamError('role')
+    const result = await MongoHelper.getCollection('accounts').insertOne({ name, email, role, password })
     return result.insertedId !== null
   }
 

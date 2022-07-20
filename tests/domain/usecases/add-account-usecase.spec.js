@@ -30,10 +30,11 @@ const makeCheckAccountByEmailRepositorySpy = () => {
 const makeAddAccountRepositorySpy = () => {
   class AddAccountRepository {
     isValid = true
-    async add ({ name, email, password }) {
+    async add ({ name, email, password, role }) {
       this.name = name
       this.email = email
       this.password = password
+      this.role = role
       return this.isValid
     }
   }
@@ -179,10 +180,25 @@ describe('Add Account Usecase', () => {
     await sut.add({
       name: 'any_name',
       email: 'any_email@email.com',
+      role: 'other_role',
       password: 'any_password'
     })
     expect(addAccountRepositorySpy.name).toBe('any_name')
     expect(addAccountRepositorySpy.email).toBe('any_email@email.com')
+    expect(addAccountRepositorySpy.role).toBe('other_role')
+    expect(addAccountRepositorySpy.password).toBe(hasherSpy.encryptedHash)
+  })
+
+  test('Should call addAccountRepository with user role if role is not provided', async () => {
+    const { sut, addAccountRepositorySpy, hasherSpy } = makeSut()
+    await sut.add({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password'
+    })
+    expect(addAccountRepositorySpy.name).toBe('any_name')
+    expect(addAccountRepositorySpy.email).toBe('any_email@email.com')
+    expect(addAccountRepositorySpy.role).toBe('user')
     expect(addAccountRepositorySpy.password).toBe(hasherSpy.encryptedHash)
   })
 
