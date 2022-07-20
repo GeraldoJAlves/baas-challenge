@@ -1,3 +1,4 @@
+const { InvalidDateError } = require('../../../src/presentation/errors')
 const { DateValidation } = require('../../../src/validation/validators')
 
 const makeSut = (fieldName = 'date', format = 'YYYY-MM-DD') => {
@@ -15,6 +16,7 @@ const makeSut = (fieldName = 'date', format = 'YYYY-MM-DD') => {
 
 const makeDateValidatorSpy = () => {
   class DateValidator {
+    isDateValid = true
     isValid (date, format) {
       this.date = date
       this.format = format
@@ -35,5 +37,12 @@ describe('Date Validation', () => {
     sut.validate(input)
     expect(dateValidatorSpy.date).toBe(input.date)
     expect(dateValidatorSpy.format).toBe('YYYY-MM-DD')
+  })
+
+  test('Should return an InvalidDateError if dateValidator returns false', () => {
+    const { sut, dateValidatorSpy } = makeSut()
+    dateValidatorSpy.isDateValid = false
+    const error = sut.validate(makeInput())
+    expect(error).toEqual(new InvalidDateError('date'))
   })
 })
