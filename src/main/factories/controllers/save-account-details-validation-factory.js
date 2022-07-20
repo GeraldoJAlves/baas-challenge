@@ -1,5 +1,10 @@
-const { CpfValidatorAdapter } = require('../../../infra/validators')
-const { RequiredFieldValidation, ValidationComposite, CpfValidation } = require('../../../validation/validators')
+const { CpfValidatorAdapter, DateValidatorAdapter } = require('../../../infra/validators')
+const {
+  RequiredFieldValidation,
+  ValidationComposite,
+  CpfValidation,
+  DateValidation
+} = require('../../../validation/validators')
 
 module.exports = () => {
   const validations = []
@@ -10,6 +15,12 @@ module.exports = () => {
   validations.push(new CpfValidation({
     fieldName: 'cpf',
     cpfValidator: new CpfValidatorAdapter()
+  }))
+
+  validations.push(new DateValidation({
+    fieldName: 'birthDate',
+    dateValidator: new DateValidatorAdapter(),
+    format: 'YYYY-MM-DD'
   }))
 
   return new ValidationComposite(validations)

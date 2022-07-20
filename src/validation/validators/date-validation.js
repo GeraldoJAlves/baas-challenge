@@ -12,6 +12,7 @@ module.exports = class DateValidation {
   }
 
   validate (input = {}) {
-    if (!this.dateValidator.isValid(input[this.fieldName], this.format)) return new InvalidDateError(this.fieldName)
+    const date = input[this.fieldName]
+    if (date && !this.dateValidator.isValid(date, this.format)) return new InvalidDateError(this.fieldName)
   }
 }
