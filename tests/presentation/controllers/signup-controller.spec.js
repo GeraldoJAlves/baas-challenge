@@ -35,11 +35,11 @@ const makeAddAccountUseCaseSpy = () => {
 
 const makeAuthUseCaseSpy = () => {
   class AuthUseCase {
-    accessToken = 'valid_token'
+    authentication = { accessToken: 'valid_token', name: 'any_name' }
     async auth (email, password) {
       this.email = email
       this.password = password
-      return this.accessToken
+      return this.authentication
     }
   }
   return new AuthUseCase()
@@ -168,9 +168,6 @@ describe('Signup Controller', () => {
     const { sut, authUseCaseSpy } = makeSut()
     const request = makeRequest()
     const httpResponse = await sut.handle(request)
-    expect(httpResponse).toEqual(HttpHelper.ok({
-      accessToken: authUseCaseSpy.accessToken,
-      name: request.name
-    }))
+    expect(httpResponse).toEqual(HttpHelper.ok(authUseCaseSpy.authentication))
   })
 })
