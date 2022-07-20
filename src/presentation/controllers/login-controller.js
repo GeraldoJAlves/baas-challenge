@@ -13,11 +13,11 @@ module.exports = class LoginController {
       if (error) {
         return HttpHelper.badRequest(error)
       }
-      const accessToken = await this.authUseCase.auth(email, password)
-      if (!accessToken) {
+      const authentication = await this.authUseCase.auth(email, password)
+      if (!authentication) {
         return HttpHelper.unauthorized()
       }
-      return HttpHelper.ok({ accessToken })
+      return HttpHelper.ok(authentication)
     } catch (error) {
       console.error(error)
       return HttpHelper.serverError(error)

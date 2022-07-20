@@ -3,20 +3,20 @@ const { MissingParamError } = require('../../../src/presentation/errors')
 
 const makeSut = () => {
   const {
-    loadUserByEmailRepository,
+    loadAccountByEmailRepository,
     hashComparer,
     encrypter,
     updateAccessTokenRepository
   } = makeDependencies()
   const sut = new AuthUseCase({
-    loadUserByEmailRepository,
+    loadAccountByEmailRepository,
     hashComparer,
     encrypter,
     updateAccessTokenRepository
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy: loadUserByEmailRepository,
+    loadAccountByEmailRepositorySpy: loadAccountByEmailRepository,
     hashComparerSpy: hashComparer,
     encrypterSpy: encrypter,
     updateAccessTokenRepositorySpy: updateAccessTokenRepository
@@ -24,65 +24,66 @@ const makeSut = () => {
 }
 
 const makeDependencies = () => ({
-  loadUserByEmailRepository: makeLoadUserByEmailRepositorySpy(),
+  loadAccountByEmailRepository: makeloadAccountByEmailRepositorySpy(),
   hashComparer: makeHashComparerSpy(),
   encrypter: makeEncrypterSpy(),
   updateAccessTokenRepository: makeUpdateAccessTokenRepositorySpy()
 })
 
 const makeDependenciesThrowError = () => ({
-  loadUserByEmailRepository: makeLoadUserByEmailRepositoryThrowError(),
+  loadAccountByEmailRepository: makeloadAccountByEmailRepositoryThrowError(),
   hashComparer: makeHashComparerThrowError(),
   encrypter: makeEncrypterThrowError(),
   updateAccessTokenRepository: makeUpdateAccessTokenRepositoryThrowError()
 })
 
-const makeLoadUserByEmailRepositorySpy = () => {
-  class LoadUserByEmailRepositorySpy {
-    user = {
+const makeloadAccountByEmailRepositorySpy = () => {
+  class LoadAccountByEmailRepository {
+    account = {
       id: 'user_id',
+      name: 'any_name',
       password: 'hashed_password'
     }
 
     async loadByEmail (email) {
       this.email = email
-      return this.user
+      return this.account
     }
   }
-  return new LoadUserByEmailRepositorySpy()
+  return new LoadAccountByEmailRepository()
 }
 
-const makeLoadUserByEmailRepositoryThrowError = () => {
-  class LoadUserByEmailRepositorySpy {
+const makeloadAccountByEmailRepositoryThrowError = () => {
+  class LoadAccountByEmailRepository {
     async loadByEmail () {
       throw new Error()
     }
   }
-  return new LoadUserByEmailRepositorySpy()
+  return new LoadAccountByEmailRepository()
 }
 
 const makeEncrypterSpy = () => {
-  class EncrypterSpy {
+  class Encrypter {
     accessToken = 'any_token'
     async encrypt (userId) {
       this.userId = userId
       return this.accessToken
     }
   }
-  return new EncrypterSpy()
+  return new Encrypter()
 }
 
 const makeEncrypterThrowError = () => {
-  class EncrypterSpy {
+  class Encrypter {
     async encrypt () {
       throw new Error()
     }
   }
-  return new EncrypterSpy()
+  return new Encrypter()
 }
 
 const makeHashComparerSpy = () => {
-  class HashComparerSpy {
+  class HashComparer {
     isValid = true
     async compare (password, hashedPassword) {
       this.password = password
@@ -90,35 +91,35 @@ const makeHashComparerSpy = () => {
       return this.isValid
     }
   }
-  return new HashComparerSpy()
+  return new HashComparer()
 }
 
 const makeHashComparerThrowError = () => {
-  class HashComparerSpy {
+  class HashComparer {
     async compare () {
       throw new Error()
     }
   }
-  return new HashComparerSpy()
+  return new HashComparer()
 }
 
 const makeUpdateAccessTokenRepositorySpy = () => {
-  class UpdateAccessTokenRepositorySpy {
+  class UpdateAccessTokenRepository {
     async updateAccessToken (userId, accessToken) {
       this.userId = userId
       this.accessToken = accessToken
     }
   }
-  return new UpdateAccessTokenRepositorySpy()
+  return new UpdateAccessTokenRepository()
 }
 
 const makeUpdateAccessTokenRepositoryThrowError = () => {
-  class UpdateAccessTokenRepositorySpy {
+  class UpdateAccessTokenRepository {
     async updateAccessToken () {
       throw new Error()
     }
   }
-  return new UpdateAccessTokenRepositorySpy()
+  return new UpdateAccessTokenRepository()
 }
 
 describe('Auth UseCase', () => {
@@ -171,50 +172,51 @@ describe('Auth UseCase', () => {
     }
   })
 
-  test('Should call LoadUserByEmailRepository with correct param', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut()
+  test('Should call loadAccountByEmailRepository with correct param', async () => {
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut()
     sut.auth('any_email@email.com', 'any_password')
-    expect(loadUserByEmailRepositorySpy.email).toBe('any_email@email.com')
+    expect(loadAccountByEmailRepositorySpy.email).toBe('any_email@email.com')
   })
 
-  test('Should return null if LoadUserByEmailRepository returns null', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut()
-    loadUserByEmailRepositorySpy.user = null
-    const accessToken = await sut.auth('any_email@email.com', 'any_password')
-    expect(accessToken).toBeNull()
+  test('Should return null if loadAccountByEmailRepository returns null', async () => {
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut()
+    loadAccountByEmailRepositorySpy.account = null
+    const authentication = await sut.auth('any_email@email.com', 'any_password')
+    expect(authentication).toBeNull()
   })
 
   test('Should call HashComparer with correct values', async () => {
-    const { sut, hashComparerSpy, loadUserByEmailRepositorySpy } = makeSut()
+    const { sut, hashComparerSpy, loadAccountByEmailRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'any_password')
     expect(hashComparerSpy.password).toBe('any_password')
-    expect(hashComparerSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
+    expect(hashComparerSpy.hashedPassword).toBe(loadAccountByEmailRepositorySpy.account.password)
   })
 
   test('Should return null if HashComparer returns false', async () => {
     const { sut, hashComparerSpy } = makeSut()
     hashComparerSpy.isValid = false
-    const accessToken = await sut.auth('valid_email@email.com', 'any_password')
-    expect(accessToken).toBeFalsy()
+    const authentication = await sut.auth('valid_email@email.com', 'any_password')
+    expect(authentication).toBeFalsy()
   })
 
   test('Should call Encrypter with correct userId', async () => {
-    const { sut, encrypterSpy, loadUserByEmailRepositorySpy } = makeSut()
+    const { sut, encrypterSpy, loadAccountByEmailRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'any_password')
-    expect(encrypterSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+    expect(encrypterSpy.userId).toBe(loadAccountByEmailRepositorySpy.account.id)
   })
 
   test('Should return an accessToken if correct credentials are provided', async () => {
-    const { sut, encrypterSpy } = makeSut()
-    const accessToken = await sut.auth('valid_email@email.com', 'valid_password')
-    expect(accessToken).toBe(encrypterSpy.accessToken)
-    expect(accessToken).toBeTruthy()
+    const { sut, encrypterSpy, loadAccountByEmailRepositorySpy } = makeSut()
+    const authentication = await sut.auth('valid_email@email.com', 'valid_password')
+    expect(authentication.accessToken).toBe(encrypterSpy.accessToken)
+    expect(authentication.name).toBe(loadAccountByEmailRepositorySpy.account.name)
+    expect(authentication).toBeTruthy()
   })
 
   test('Should call UpdateAccessTokenRepository with correct values', async () => {
-    const { sut, encrypterSpy, loadUserByEmailRepositorySpy, updateAccessTokenRepositorySpy } = makeSut()
+    const { sut, encrypterSpy, loadAccountByEmailRepositorySpy, updateAccessTokenRepositorySpy } = makeSut()
     await sut.auth('valid_email@email.com', 'valid_password')
     expect(updateAccessTokenRepositorySpy.accessToken).toBe(encrypterSpy.accessToken)
-    expect(updateAccessTokenRepositorySpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+    expect(updateAccessTokenRepositorySpy.userId).toBe(loadAccountByEmailRepositorySpy.account.id)
   })
 })

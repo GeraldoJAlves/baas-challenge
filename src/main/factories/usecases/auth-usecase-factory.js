@@ -8,7 +8,7 @@ module.exports = () => {
   const jwtAdapter = new JwtAdapter(jwtSecret)
   const accountMongoRepository = new AccountMongoRepository()
   return new AuthUseCase({
-    loadUserByEmailRepository: accountMongoRepository,
+    loadAccountByEmailRepository: accountMongoRepository,
     encrypter: jwtAdapter,
     hashComparer: bcryptAdpater,
     updateAccessTokenRepository: accountMongoRepository

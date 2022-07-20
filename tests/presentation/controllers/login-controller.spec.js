@@ -17,11 +17,11 @@ const makeSut = () => {
 
 const makeAuthUseCaseSpy = () => {
   class AuthUseCase {
-    accessToken = 'valid_token'
+    authentication = { accessToken: 'valid_token', name: 'any_name' }
     auth (email, password) {
       this.email = email
       this.password = password
-      return this.accessToken
+      return this.authentication
     }
   }
   return new AuthUseCase()
@@ -116,7 +116,7 @@ describe('Login Controller', () => {
 
   test('Should return 401 when invalid credentials are provided', async () => {
     const { sut, authUseCaseSpy } = makeSut()
-    authUseCaseSpy.accessToken = undefined
+    authUseCaseSpy.authentication = null
     const request = makeRequestWithInvalidCredentials()
     const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(401)
@@ -128,7 +128,7 @@ describe('Login Controller', () => {
     const request = makeRequest()
     const httpResponse = await sut.handle(request)
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({ accessToken: 'valid_token' })
+    expect(httpResponse.body).toEqual({ accessToken: 'valid_token', name: 'any_name' })
   })
 
   test('Should return 400 if Validation returns an error', async () => {
