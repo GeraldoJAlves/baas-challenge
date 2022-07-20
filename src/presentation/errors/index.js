@@ -6,6 +6,7 @@ const AccessDeniedError = require('./access-denied-error')
 const InvalidUploadFileError = require('./invalid-upload-file-error')
 const InvalidFileTypeError = require('./invalid-file-type-error')
 const AccountAlreadyRequestedError = require('./account-already-requested-error')
+const InvalidCpfError = require('./invalid-cpf-error')
 
 module.exports = {
   InvalidParamError,
@@ -15,5 +16,6 @@ module.exports = {
   AccessDeniedError,
   InvalidUploadFileError,
   InvalidFileTypeError,
-  AccountAlreadyRequestedError
+  AccountAlreadyRequestedError,
+  InvalidCpfError
 }

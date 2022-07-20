@@ -1,3 +1,5 @@
+const { InvalidCpfError } = require('../../presentation/errors')
+
 module.exports = class CpfValidation {
   constructor ({ cpfValidator, fieldName }) {
     this.cpfValidator = cpfValidator
@@ -5,6 +7,6 @@ module.exports = class CpfValidation {
   }
 
   validate (input) {
-    this.cpfValidator.isValid(input[this.fieldName])
+    if (!this.cpfValidator.isValid(input[this.fieldName])) return new InvalidCpfError(this.fieldName)
   }
 }
