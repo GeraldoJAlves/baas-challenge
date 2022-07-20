@@ -1,6 +1,7 @@
 jest.unmock('bcrypt')
 jest.unmock('jsonwebtoken')
 jest.unmock('validator')
+jest.unmock('cpf-cnpj-validator')
 
 const { mockClient } = require('aws-sdk-client-mock')
 const { mockLibStorageUpload } = require('aws-sdk-client-mock/libStorage')
@@ -16,6 +17,7 @@ const MongoHelper = require('../../../src/infra/db/mongodb/mongo-helper')
 const env = require('../../../src/main/config/env')
 const setupApp = require('../../../src/main/config/app')
 const { jwtSecret } = require('../../../src/main/config/env')
+const { cpf } = require('cpf-cnpj-validator')
 
 const mockAccount = async (role = 'user') => {
   const hashedPassword = await bcrypt.hash('12345', env.salt)
@@ -59,7 +61,7 @@ const makeAccountDetails = () => ({
   fatherName: 'any_father_name',
   motherName: 'any_mother_name',
   rg: '12934',
-  cpf: '1234590',
+  cpf: cpf.generate(),
   address: 'street one, 111',
   city: 'any_city',
   state: 'any_state',
@@ -88,18 +90,7 @@ describe('Account Routes', () => {
       await supertest(app)
         .post('/api/account/details')
         .set('x-access-token', accessToken)
-        .send({
-          fullName: 'any_name',
-          birthDate: '2000-01-01',
-          fatherName: 'any_father_name',
-          motherName: 'any_mother_name',
-          rg: '12934',
-          cpf: '1234590',
-          address: 'street one, 111',
-          city: 'any_city',
-          state: 'any_state',
-          cep: 'any_cep'
-        })
+        .send(makeAccountDetails())
         .expect(200)
     })
 
@@ -107,18 +98,7 @@ describe('Account Routes', () => {
       await mockAccount()
       await supertest(app)
         .post('/api/account/details')
-        .send({
-          fullName: 'any_name',
-          birthDate: '2000-01-01',
-          fatherName: 'any_father_name',
-          motherName: 'any_mother_name',
-          rg: '12934',
-          cpf: '1234590',
-          address: 'street one, 111',
-          city: 'any_city',
-          state: 'any_state',
-          cep: 'any_cep'
-        })
+        .send(makeAccountDetails())
         .expect(403)
     })
 
