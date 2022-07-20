@@ -6,7 +6,7 @@ module.exports = class CpfValidation {
     this.fieldName = fieldName
   }
 
-  validate (input) {
+  validate (input = {}) {
     if (!this.cpfValidator.isValid(input[this.fieldName])) return new InvalidCpfError(this.fieldName)
   }
 }
