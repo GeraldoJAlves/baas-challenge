@@ -1,3 +1,4 @@
+const { InvalidCpfError } = require('../../../src/presentation/errors')
 const { CpfValidation } = require('../../../src/validation/validators')
 
 const makeSut = (fieldName = 'cpf') => {
@@ -14,10 +15,10 @@ const makeSut = (fieldName = 'cpf') => {
 
 const makeCpfValidatorSpy = () => {
   class CpfValidator {
-    isValidCpf = true
+    isCpfValid = true
     isValid (cpf) {
       this.cpf = cpf
-      return this.isValidCpf
+      return this.isCpfValid
     }
   }
   return new CpfValidator()
@@ -33,5 +34,18 @@ describe('Cpf Validation', () => {
     const input = makeInput()
     sut.validate(input)
     expect(cpfValidatorSpy.cpf).toBe(input.cpf)
+  })
+
+  test('Should return an InvalidCpfError if cpfValidator returns false', () => {
+    const { sut, cpfValidatorSpy } = makeSut()
+    cpfValidatorSpy.isCpfValid = false
+    const error = sut.validate(makeInput())
+    expect(error).toEqual(new InvalidCpfError('cpf'))
+  })
+
+  test('Should return false if an cpfValidator returns true', () => {
+    const { sut } = makeSut()
+    const error = sut.validate(makeInput())
+    expect(error).toBeFalsy()
   })
 })
