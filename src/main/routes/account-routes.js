@@ -4,7 +4,7 @@ const {
   makeLoadAccountDetailsController,
   makeSaveAccountDocumentController
 } = require('../factories')
-const { userAuth } = require('../midlewares')
+const { userAuth } = require('../middlewares')
 
 module.exports = (router) => {
   router.post('/account/details', userAuth, expressRouteAdapter(makeSaveAccountDetailsController()))

@@ -1,4 +1,4 @@
-const { cors, bodyParser, contentType, fileUpload } = require('../midlewares')
+const { cors, bodyParser, contentType, fileUpload } = require('../middlewares')
 
 module.exports = (app) => {
   app.use(cors)
