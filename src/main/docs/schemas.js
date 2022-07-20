@@ -1,11 +1,19 @@
-const { accountSchema } = require('./schemas/')
-const errorSchema = require('./schemas/error-schema')
-const loginParamsSchema = require('./schemas/login-params-schema')
-const signupParamsSchema = require('./schemas/signup-params-schema')
+const {
+  accountSchema,
+  errorSchema,
+  loginParamsSchema,
+  signupParamsSchema,
+  accountDetailsParamsSchema,
+  accountDetailsSchema,
+  accountDocumentParamsSchema
+} = require('./schemas/')
 
 module.exports = {
   account: accountSchema,
+  accountDetails: accountDetailsSchema,
   loginParams: loginParamsSchema,
-  signUpParams: signupParamsSchema,
+  signupParams: signupParamsSchema,
+  accountDetailsParams: accountDetailsParamsSchema,
+  accountDocumentParams: accountDocumentParamsSchema,
   error: errorSchema
 }

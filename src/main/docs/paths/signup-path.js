@@ -8,7 +8,7 @@ module.exports = {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/schemas/signUpParams'
+            $ref: '#/schemas/signupParams'
           }
         }
       }
