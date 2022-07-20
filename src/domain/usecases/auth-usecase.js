@@ -16,12 +16,12 @@ module.exports = class AuthUseCase {
   async auth (email, password) {
     if (!email) throw new MissingParamError('email')
     if (!password) throw new MissingParamError('password')
-    const user = await this.loadAccountByEmailRepository.loadByEmail(email)
-    if (!user) return null
-    const isValid = await this.hashComparer.compare(password, user.password)
+    const account = await this.loadAccountByEmailRepository.loadByEmail(email)
+    if (!account) return null
+    const isValid = await this.hashComparer.compare(password, account.password)
     if (!isValid) return null
-    const accessToken = await this.encrypter.encrypt(user.id)
-    await this.updateAccessTokenRepository.updateAccessToken(user.id, accessToken)
-    return { accessToken, name: user.name }
+    const accessToken = await this.encrypter.encrypt(account.id)
+    await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
+    return { accessToken, name: account.name }
   }
 }
